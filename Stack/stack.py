@@ -23,7 +23,7 @@ class Stack:
     def top(self):
         """
         Returns the element at the top of the stack, without removing it.
-        Raises Empty exception if the stack is empty
+        Raises Empty exception if the stack is empty.
         """
         if self.is_empty():
             raise Empty('The stack is empty')
@@ -31,8 +31,8 @@ class Stack:
 
     def pop(self):
         """
-        Removes and returns the element from the top of the stack
-        Raises Empty exception if the stack is empty
+        Removes and returns the element from the top of the stack.
+        Raises Empty exception if the stack is empty.
         """
         if self.is_empty():
             raise Empty('The stack is empty')
