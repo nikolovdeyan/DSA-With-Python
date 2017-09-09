@@ -63,4 +63,3 @@ class Queue:
         self._size -= 1
 
         return result
-
