@@ -53,7 +53,7 @@ class LinkedStack:
 
 
 class LinkedQueue:
-    """FIFO queue implementation using a singly linked list for storage."""
+    """FIFO Queue implementation using a singly linked list for storage."""
 
     class _Node:
         """Lightweight, nonpublic class for storing a singly linked node."""
@@ -107,3 +107,4 @@ class LinkedQueue:
             self._tail._next = newest
         self._tail = newest
         self._size += 1
+
