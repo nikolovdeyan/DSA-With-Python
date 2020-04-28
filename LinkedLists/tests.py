@@ -1,5 +1,6 @@
 import unittest
 from singly_linked import LinkedStack, LinkedQueue
+from circularly_linked import CircularQueue
 from empty import Empty
 
 
@@ -141,6 +142,77 @@ class TestLinkedQueueMethods(unittest.TestCase):
 
     def test_dequeue_raises_empty_exception_if_queue_is_empty(self):
         q = LinkedQueue()
+
+        self.assertRaises(Empty, q.dequeue)
+
+
+class TestCircularQueueMethods(unittest.TestCase):
+
+    def test_constructor_creates_an_empty_queue(self):
+        q = CircularQueue()
+
+        self.assertIsInstance(q, CircularQueue)
+
+    def test_empty_queue_size_is_zero(self):
+        q = CircularQueue()
+        expected_size = 0
+        actual_size = q._size
+
+        self.assertEqual(actual_size, expected_size)
+
+    def test_is_empty_returns_true_if_queue_is_empty(self):
+        q = CircularQueue()
+
+        self.assertTrue(q.is_empty)
+
+    def test_first_returns_first_element_without_removing_it(self):
+        q = CircularQueue()
+        newest = CircularQueue._Node('foo', None)
+        newest._next = newest
+        q._tail = newest
+        q._size = 1
+        expected_result = 'foo'
+
+        result = q.first()
+
+        self.assertEqual(result, expected_result)
+        self.assertIn(expected_result, q._tail._next._element)
+
+    def test_first_raises_empty_exception_if_queue_is_empty(self):
+        q = CircularQueue()
+
+        self.assertRaises(Empty, q.first)
+
+    def test_enqueue_adds_an_element_to_the_back_of_queue(self):
+        q = CircularQueue()
+        first_element = CircularQueue._Node('foo', None)
+        first_element._next = first_element
+        q._tail = first_element
+        q._size = 1
+        second_element = 'bar'
+
+        q.enqueue(second_element)
+        result = q._tail._element
+
+        self.assertEqual(result, second_element)
+
+    def test_dequeue_returns_and_removes_first_element_from_queue(self):
+        q = CircularQueue()
+        second_element = CircularQueue._Node('bar', None)
+        first_element = CircularQueue._Node('foo', None)
+        q._tail = second_element
+        q._tail._next = first_element
+        q._size = 2
+        expected_result = 'foo'
+
+        result = q.dequeue()
+
+        self.assertEqual(q._size, 1)
+        self.assertEqual(result, expected_result)
+        self.assertIsNot(q._tail._next, first_element)
+
+    def test_dequeue_raises_empty_exception_if_queue_is_empty(self):
+        q = CircularQueue()
 
         self.assertRaises(Empty, q.dequeue)
 
