@@ -1,5 +1,5 @@
 import unittest
-from queue import Queue
+from queue import Queue, ArrayDeque
 from empty import Empty
 
 
@@ -10,7 +10,7 @@ class TestQueueMethods(unittest.TestCase):
 
         self.assertIsInstance(q, Queue)
 
-    def test_empty_queue_size_is_zero(self):
+    def test_empty_queue_size(self):
         q = Queue()
         expected_size = Queue.DEFAULT_CAPACITY
 
@@ -102,3 +102,18 @@ class TestQueueMethods(unittest.TestCase):
         q = Queue()
 
         self.assertRaises(Empty, q.dequeue)
+
+
+class TestArrayDequeMethods(unittest.TestCase):
+    def test_constructor_creates_ArrayDeque(self):
+        d = ArrayDeque()
+
+        self.assertIsInstance(d, ArrayDeque)
+
+    def test_empty_deque_size(self):
+        d = ArrayDeque()
+        expected_size = ArrayDeque.DEFAULT_CAPACITY
+
+        actual_size = len(d._data)
+
+        self.assertEqual(actual_size, expected_size)
