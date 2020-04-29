@@ -3,3 +3,4 @@ __pycache__
 ve-*
 notes.org
 exercises.org
+.coverage
