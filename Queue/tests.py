@@ -1,11 +1,11 @@
 import unittest
-from queue import Queue, ArrayDeque
+from queues import Queue, ArrayDeque
 from empty import Empty
 
 
 class TestQueueMethods(unittest.TestCase):
 
-    def test_constructor_creates_an_empty_queue(self):
+    def test_constructor_creates_an_queue(self):
         q = Queue()
 
         self.assertIsInstance(q, Queue)
@@ -41,7 +41,7 @@ class TestQueueMethods(unittest.TestCase):
     def test_is_empty_returns_true_if_queue_is_empty(self):
         q = Queue()
 
-        self.assertTrue(q.is_empty)
+        self.assertTrue(q.is_empty())
 
     def test_first_returns_first_element_without_removing_it(self):
         elements = ['foo', 'bar', 'baz']
@@ -117,3 +117,157 @@ class TestArrayDequeMethods(unittest.TestCase):
         actual_size = len(d._data)
 
         self.assertEqual(actual_size, expected_size)
+
+    def test_resize_increases_capacity(self):
+        d = ArrayDeque()
+
+        d._resize(50)
+
+        self.assertEqual(len(d._data), 50)
+
+    def test_resize_preserves_order_of_enqueued_elements(self):
+        elements = ['foo', 'bar', 'baz']
+        expected_sequence = [None] * 20
+        expected_sequence[0:3] = elements
+        d = ArrayDeque()
+        d._data[2:5] = elements
+        d._size = 3
+        d._front = 2
+
+        d._resize(20)
+
+        self.assertSequenceEqual(d._data, expected_sequence)
+
+    def test_is_empty_returns_true_if_deque_is_empty(self):
+        d = ArrayDeque()
+
+        self.assertTrue(d.is_empty())
+
+    def test_is_empty_returns_false_if_deque_is_not_empty(self):
+        elements = ['foo', 'bar', 'baz']
+        d = ArrayDeque()
+        d._data[2:5] = elements
+        d._size = 3
+        d._front = 2
+
+        self.assertFalse(d.is_empty())
+
+    def test_first_returns_first_element_without_removing_it(self):
+        elements = ['foo', 'bar', 'baz']
+        expected_result = 'foo'
+        d = ArrayDeque()
+        d._data[2:5] = elements
+        d._size = 3
+        d._front = 2
+
+        result = d.first()
+
+        self.assertEqual(result, expected_result)
+        self.assertIn(expected_result, d._data)
+
+    def test_first_raises_empty_exception_if_deque_is_empty(self):
+        d = ArrayDeque()
+
+        self.assertRaises(Empty, d.first)
+
+    def test_last_returns_last_element_without_removing_it(self):
+        elements = ['foo', 'bar', 'baz']
+        expected_result = 'baz'
+        d = ArrayDeque()
+        d._data[2:5] = elements
+        d._size = 3
+        d._front = 2
+
+        result = d.last()
+
+        self.assertEqual(result, expected_result)
+        self.assertIn(expected_result, d._data)
+
+    def test_last_raises_empty_exception_if_deque_is_empty(self):
+        d = ArrayDeque()
+
+        self.assertRaises(Empty, d.last)
+
+    def test_add_first_adds_an_element_to_the_front_of_deque(self):
+        elements = ['bar', 'baz']
+        expected_result = 'foo'
+        d = ArrayDeque()
+        d._data[2:4] = elements
+        d._size = 2
+        d._front = 2
+
+        d.add_first(expected_result)
+        result = d._data[1]
+
+        self.assertEqual(result, expected_result)
+
+    def test_add_first_doubles_deque_size_if_capacity_reached(self):
+        expected_result = ArrayDeque.DEFAULT_CAPACITY * 2
+        d = ArrayDeque()
+
+        for e in range(ArrayDeque.DEFAULT_CAPACITY + 1):
+            d.add_first(e)
+        result = len(d._data)
+
+        self.assertEqual(result, expected_result)
+
+    def test_add_last_doubles_deque_size_if_capacity_reached(self):
+        expected_result = ArrayDeque.DEFAULT_CAPACITY * 2
+        d = ArrayDeque()
+
+        for e in range(ArrayDeque.DEFAULT_CAPACITY + 1):
+            d.add_last(e)
+        result = len(d._data)
+
+        self.assertEqual(result, expected_result)
+
+    def test_add_last_adds_an_element_to_the_back_of_deque(self):
+        elements = ['foo', 'bar']
+        expected_result = 'baz'
+        d = ArrayDeque()
+        d._data[2:4] = elements
+        d._size = 2
+        d._front = 2
+
+        d.add_last(expected_result)
+        result = d._data[4]
+
+        self.assertEqual(result, expected_result)
+
+    def test_delete_first_returns_and_removes_first_element_from_deque(self):
+        elements = ['foo', 'bar']
+        expected_result = 'foo'
+        d = ArrayDeque()
+        d._data[2:4] = elements
+        d._size = 2
+        d._front = 2
+
+        result = d.delete_first()
+
+        self.assertEqual(d._size, 1)
+        self.assertEqual(result, expected_result)
+        self.assertNotIn('foo', d._data)
+
+    def test_delete_first_raises_empty_exception_if_deque_is_empty(self):
+        d = ArrayDeque()
+
+        self.assertRaises(Empty, d.delete_first)
+
+    def test_delete_last_returns_and_removes_last_element_from_deque(self):
+        elements = ['foo', 'bar']
+        expected_result = 'bar'
+        d = ArrayDeque()
+        d._data[2:4] = elements
+        d._size = 2
+        d._front = 2
+
+        result = d.delete_last()
+
+        self.assertEqual(d._size, 1)
+        self.assertEqual(result, expected_result)
+        self.assertNotIn('bar', d._data)
+
+    def test_delete_last_raises_empty_exception_if_deque_is_empty(self):
+        d = ArrayDeque()
+
+        self.assertRaises(Empty, d.delete_last)
