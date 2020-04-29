@@ -1,25 +1,25 @@
 import unittest
-from queues import Queue, ArrayDeque
+from queues import ArrayQueue, ArrayDeque
 from empty import Empty
 
 
-class TestQueueMethods(unittest.TestCase):
+class TestArrayQueueMethods(unittest.TestCase):
 
     def test_constructor_creates_an_queue(self):
-        q = Queue()
+        q = ArrayQueue()
 
-        self.assertIsInstance(q, Queue)
+        self.assertIsInstance(q, ArrayQueue)
 
     def test_empty_queue_size(self):
-        q = Queue()
-        expected_size = Queue.DEFAULT_CAPACITY
+        q = ArrayQueue()
+        expected_size = ArrayQueue.DEFAULT_CAPACITY
 
         actual_size = len(q._data)
 
         self.assertEqual(actual_size, expected_size)
 
     def test_resize_increases_capacity(self):
-        q = Queue()
+        q = ArrayQueue()
 
         q._resize(50)
 
@@ -29,7 +29,7 @@ class TestQueueMethods(unittest.TestCase):
         elements = ['foo', 'bar', 'baz']
         expected_sequence = [None] * 20
         expected_sequence[0:3] = elements
-        q = Queue()
+        q = ArrayQueue()
         q._data[2:5] = elements
         q._size = 3
         q._front = 2
@@ -39,14 +39,14 @@ class TestQueueMethods(unittest.TestCase):
         self.assertSequenceEqual(q._data, expected_sequence)
 
     def test_is_empty_returns_true_if_queue_is_empty(self):
-        q = Queue()
+        q = ArrayQueue()
 
         self.assertTrue(q.is_empty())
 
     def test_first_returns_first_element_without_removing_it(self):
         elements = ['foo', 'bar', 'baz']
         expected_result = 'foo'
-        q = Queue()
+        q = ArrayQueue()
         q._data[2:5] = elements
         q._size = 3
         q._front = 2
@@ -57,14 +57,14 @@ class TestQueueMethods(unittest.TestCase):
         self.assertIn(expected_result, q._data)
 
     def test_first_raises_empty_exception_if_queue_is_empty(self):
-        q = Queue()
+        q = ArrayQueue()
 
         self.assertRaises(Empty, q.first)
 
     def test_enqueue_adds_an_element_to_the_back_of_queue(self):
         elements = ['foo', 'bar']
         expected_result = 'baz'
-        q = Queue()
+        q = ArrayQueue()
         q._data[2:4] = elements
         q._size = 2
         q._front = 2
@@ -75,10 +75,10 @@ class TestQueueMethods(unittest.TestCase):
         self.assertEqual(result, expected_result)
 
     def test_enqueue_doubles_queue_size_if_capacity_reached(self):
-        expected_result = Queue.DEFAULT_CAPACITY * 2
-        q = Queue()
+        expected_result = ArrayQueue.DEFAULT_CAPACITY * 2
+        q = ArrayQueue()
 
-        for e in range(Queue.DEFAULT_CAPACITY + 1):
+        for e in range(ArrayQueue.DEFAULT_CAPACITY + 1):
             q.enqueue(e)
         result = len(q._data)
 
@@ -87,7 +87,7 @@ class TestQueueMethods(unittest.TestCase):
     def test_dequeue_returns_and_removes_first_element_from_queue(self):
         elements = ['foo', 'bar']
         expected_result = 'foo'
-        q = Queue()
+        q = ArrayQueue()
         q._data[2:4] = elements
         q._size = 2
         q._front = 2
@@ -99,7 +99,7 @@ class TestQueueMethods(unittest.TestCase):
         self.assertNotIn('foo', q._data)
 
     def test_dequeue_raises_empty_exception_if_queue_is_empty(self):
-        q = Queue()
+        q = ArrayQueue()
 
         self.assertRaises(Empty, q.dequeue)
 

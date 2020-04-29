@@ -1,7 +1,7 @@
 from empty import Empty
 
 
-class Stack:
+class ArrayStack:
     """Stack implementation using a Python list as underlying storage."""
 
     def __init__(self):

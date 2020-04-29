@@ -215,4 +215,3 @@ class TestCircularQueueMethods(unittest.TestCase):
         q = CircularQueue()
 
         self.assertRaises(Empty, q.dequeue)
-

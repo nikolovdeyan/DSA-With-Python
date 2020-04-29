@@ -1,16 +1,16 @@
 from empty import Empty
 
+
 class LinkedStack:
     """LIFO Stack implementation using a singly linked list for storage."""
 
     class _Node:
         """Lightweight, nonpublic class for storing a singly linked node."""
-        __slots__ = '_element' , '_next' # streamline memory usage
+        __slots__ = '_element', '_next'  # streamline memory usage
 
         def __init__(self, element, next):
             self._element = element
             self._next = next
-
 
     def __init__(self):
         """Create an empty stack."""
@@ -37,7 +37,7 @@ class LinkedStack:
         """
         if self.is_empty():
             raise Empty('Stack is empty')
-        return self._head._element # top of stack is at head of list
+        return self._head._element  # top of stack is at head of list
 
     def pop(self):
         """Remove and return the element from the top of the stack (i.e., LIFO).
@@ -57,12 +57,11 @@ class LinkedQueue:
 
     class _Node:
         """Lightweight, nonpublic class for storing a singly linked node."""
-        __slots__ = '_element' , '_next' # streamline memory usage
+        __slots__ = '_element', '_next'  # streamline memory usage
 
         def __init__(self, element, next):
             self._element = element
             self._next = next
-
 
     def __init__(self):
         """Create an empty queue."""
@@ -95,7 +94,7 @@ class LinkedQueue:
         self._head = self._head._next
         self._size -= 1
         if self.is_empty():
-            self._tail = none
+            self._tail = None
         return answer
 
     def enqueue(self, e):
@@ -107,4 +106,3 @@ class LinkedQueue:
             self._tail._next = newest
         self._tail = newest
         self._size += 1
-
