@@ -1,14 +1,14 @@
 from empty import Empty
 
 
-class Queue:
+class ArrayQueue:
     """Queue implementation using a Python list as underlying storage."""
 
     DEFAULT_CAPACITY = 10  # moderate capacity for new queues
 
     def __init__(self):
         """Creates an empty queue."""
-        self._data = [None] * Queue.DEFAULT_CAPACITY
+        self._data = [None] * ArrayQueue.DEFAULT_CAPACITY
         self._size = 0
         self._front = 0
 

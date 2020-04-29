@@ -1,17 +1,17 @@
 import unittest
-from stack import Stack
+from stack import ArrayStack
 from empty import Empty
 
 
-class TestStackMethods(unittest.TestCase):
+class TestArrayStackMethods(unittest.TestCase):
 
     def test_constructor_creates_an_empty_stack(self):
-        s = Stack()
+        s = ArrayStack()
 
-        self.assertIsInstance(s, Stack)
+        self.assertIsInstance(s, ArrayStack)
 
     def test_empty_stack_size_should_be_zero(self):
-        s = Stack()
+        s = ArrayStack()
         expected_size = 0
 
         actual_size = len(s._data)
@@ -19,12 +19,12 @@ class TestStackMethods(unittest.TestCase):
         self.assertEqual(actual_size, expected_size)
 
     def test_len_should_return_size_of_stack(self):
-        s0 = Stack()      # Empty stack
+        s0 = ArrayStack()      # Empty stack
 
-        s1 = Stack()
+        s1 = ArrayStack()
         s1.push('foo')    # Stack with 1 element
 
-        s2 = Stack()
+        s2 = ArrayStack()
         s2.push('foo')
         s2.push('foo')    # Stack with 2 elements
 
@@ -33,19 +33,19 @@ class TestStackMethods(unittest.TestCase):
         self.assertEqual(len(s2), 2)
 
     def test_is_empty_should_return_true_if_stack_is_empty(self):
-        s = Stack()
+        s = ArrayStack()
 
         self.assertTrue(s.is_empty())
 
     def test_push_should_add_element_to_stack(self):
-        s = Stack()
+        s = ArrayStack()
 
         s.push('foo')
 
         self.assertIn('foo', s._data)
 
     def test_top_should_return_top_element_without_removing_it(self):
-        s = Stack()
+        s = ArrayStack()
         s.push('foo')
         s.push('bar')
 
@@ -55,12 +55,12 @@ class TestStackMethods(unittest.TestCase):
         self.assertIn('bar', s._data)
 
     def test_top_should_throw_empty_exception_if_stack_is_empty(self):
-        s = Stack()
+        s = ArrayStack()
 
         self.assertRaises(Empty, s.top)
 
     def test_pop_should_return_top_element_and_remove_it_from_stack(self):
-        s = Stack()
+        s = ArrayStack()
         s.push('foo')
         s.push('bar')
 
@@ -72,6 +72,6 @@ class TestStackMethods(unittest.TestCase):
         self.assertNotIn('bar', s._data)
 
     def test_pop_should_throw_empty_exception_if_stack_is_empty(self):
-        s = Stack()
+        s = ArrayStack()
 
         self.assertRaises(Empty, s.top)

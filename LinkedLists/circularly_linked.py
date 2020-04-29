@@ -1,17 +1,17 @@
 from empty import Empty
 
+
 class CircularQueue:
     """Queue implementation using circularly linked list for storage."""
 
     class _Node:
         """Lightweight, nonpublic class for storing a singly linked node."""
 
-        __slots__ = '_element' , '_next' # streamline memory usage
+        __slots__ = '_element', '_next'  # streamline memory usage
 
         def __init__(self, element, next):
             self._element = element
             self._next = next
-
 
     def __init__(self):
         """Create an empty queue."""
@@ -56,8 +56,8 @@ class CircularQueue:
         if self.is_empty():
             newest._next = newest
         else:
-            newest._next = self._tail._next # new node points to head
-            self._tail._next = newest       # old tail points to new node
+            newest._next = self._tail._next  # new node points to head
+            self._tail._next = newest        # old tail points to new node
         self._tail = newest
         self._size += 1
 
@@ -65,4 +65,3 @@ class CircularQueue:
         """Rotate front element to the back of the queue."""
         if self._size > 0:
             self._tail = self._tail._next
-
