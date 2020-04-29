@@ -130,7 +130,7 @@ class ArrayDeque:
         if self.is_empty():
             raise Empty('The deque is empty.')
 
-        last_in_line = (self._front + self._size) % len(self._data)
+        last_in_line = (self._front + self._size - 1) % len(self._data)
         result = self._data[last_in_line]
         self._data[last_in_line] = None
         self._size -= 1
