@@ -137,6 +137,7 @@ class PositionalList(_DoublyLinkedBase):
 
     def last(self):
         """Return the last Position in the list (or None if the list is empty)."""
+        return self._make_position(self._trailer._prev)
 
     def before(self, p):
         """Return the Position just before Position p (or None if p is first)."""
