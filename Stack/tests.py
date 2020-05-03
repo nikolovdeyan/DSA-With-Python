@@ -5,44 +5,38 @@ from empty import Empty
 
 class TestArrayStackMethods(unittest.TestCase):
 
-    def test_constructor_creates_an_empty_stack(self):
+    def test_len_returns_size_of_stack(self):
         s = ArrayStack()
+        expected_result = 0
 
-        self.assertIsInstance(s, ArrayStack)
+        result = len(s)
 
-    def test_empty_stack_size_should_be_zero(self):
-        s = ArrayStack()
-        expected_size = 0
+        self.assertEqual(result, expected_result)
 
-        actual_size = len(s._data)
+        elements = ['foo', 'bar', 'baz']
+        s._data = elements
+        expected_result = 3
 
-        self.assertEqual(actual_size, expected_size)
+        result = len(s)
 
-    def test_len_should_return_size_of_stack(self):
-        s0 = ArrayStack()      # Empty stack
+        self.assertEqual(result, expected_result)
 
-        s1 = ArrayStack()
-        s1.push('foo')    # Stack with 1 element
-
-        s2 = ArrayStack()
-        s2.push('foo')
-        s2.push('foo')    # Stack with 2 elements
-
-        self.assertEqual(len(s0), 0)
-        self.assertEqual(len(s1), 1)
-        self.assertEqual(len(s2), 2)
-
-    def test_is_empty_should_return_true_if_stack_is_empty(self):
+    def test_is_empty_returns_correct_boolean_value(self):
         s = ArrayStack()
 
         self.assertTrue(s.is_empty())
 
-    def test_push_should_add_element_to_stack(self):
+        s._data = ['foo']
+
+        self.assertFalse(s.is_empty())
+
+    def test_push_adds_an_element_to_stack(self):
         s = ArrayStack()
+        expected_element = 'foo'
 
-        s.push('foo')
+        s.push(expected_element)
 
-        self.assertIn('foo', s._data)
+        self.assertIn(expected_element, s._data)
 
     def test_top_should_return_top_element_without_removing_it(self):
         s = ArrayStack()
@@ -61,15 +55,14 @@ class TestArrayStackMethods(unittest.TestCase):
 
     def test_pop_should_return_top_element_and_remove_it_from_stack(self):
         s = ArrayStack()
-        s.push('foo')
-        s.push('bar')
+        expected_result = 'baz'
+        elements = ['foo', 'bar', expected_result]
+        s._data = elements
 
-        popped_element = s.pop()
-        stack_size = len(s._data)
+        result = s.pop()
 
-        self.assertEqual(stack_size, 1)
-        self.assertEqual(popped_element, 'bar')
-        self.assertNotIn('bar', s._data)
+        self.assertEqual(result, expected_result)
+        self.assertNotIn(expected_result, s._data)
 
     def test_pop_should_throw_empty_exception_if_stack_is_empty(self):
         s = ArrayStack()

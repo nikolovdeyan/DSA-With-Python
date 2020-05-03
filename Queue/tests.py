@@ -5,18 +5,21 @@ from empty import Empty
 
 class TestArrayQueueMethods(unittest.TestCase):
 
-    def test_constructor_creates_an_queue(self):
+    def test_len_returns_size_of_queue(self):
         q = ArrayQueue()
+        expected_result = 0
 
-        self.assertIsInstance(q, ArrayQueue)
+        result = len(q)
 
-    def test_empty_queue_size(self):
-        q = ArrayQueue()
-        expected_size = ArrayQueue.DEFAULT_CAPACITY
+        self.assertEqual(result, expected_result)
 
-        actual_size = len(q._data)
+        q._data = ['foo']
+        q._size = 1
+        expected_result = 1
 
-        self.assertEqual(actual_size, expected_size)
+        result = len(q)
+
+        self.assertEqual(result, expected_result)
 
     def test_resize_increases_capacity(self):
         q = ArrayQueue()
@@ -38,10 +41,15 @@ class TestArrayQueueMethods(unittest.TestCase):
 
         self.assertSequenceEqual(q._data, expected_sequence)
 
-    def test_is_empty_returns_true_if_queue_is_empty(self):
+    def test_is_empty_returns_correct_boolean_value(self):
         q = ArrayQueue()
 
         self.assertTrue(q.is_empty())
+
+        q._data = ['foo']
+        q._size = 1
+
+        self.assertFalse(q.is_empty())
 
     def test_first_returns_first_element_without_removing_it(self):
         elements = ['foo', 'bar', 'baz']
@@ -105,18 +113,21 @@ class TestArrayQueueMethods(unittest.TestCase):
 
 
 class TestArrayDequeMethods(unittest.TestCase):
-    def test_constructor_creates_ArrayDeque(self):
+    def test_len_returns_size_of_deque(self):
         d = ArrayDeque()
+        expected_result = 0
 
-        self.assertIsInstance(d, ArrayDeque)
+        result = len(d)
 
-    def test_empty_deque_size(self):
-        d = ArrayDeque()
-        expected_size = ArrayDeque.DEFAULT_CAPACITY
+        self.assertEqual(result, expected_result)
 
-        actual_size = len(d._data)
+        d._data = ['foo']
+        d._size = 1
+        expected_result = 1
 
-        self.assertEqual(actual_size, expected_size)
+        result = len(d)
+
+        self.assertEqual(result, expected_result)
 
     def test_resize_increases_capacity(self):
         d = ArrayDeque()
@@ -138,14 +149,12 @@ class TestArrayDequeMethods(unittest.TestCase):
 
         self.assertSequenceEqual(d._data, expected_sequence)
 
-    def test_is_empty_returns_true_if_deque_is_empty(self):
+    def test_is_empty_returns_correct_boolean_value(self):
         d = ArrayDeque()
 
         self.assertTrue(d.is_empty())
 
-    def test_is_empty_returns_false_if_deque_is_not_empty(self):
         elements = ['foo', 'bar', 'baz']
-        d = ArrayDeque()
         d._data[2:5] = elements
         d._size = 3
         d._front = 2

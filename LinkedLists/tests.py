@@ -8,37 +8,27 @@ from empty import Empty
 
 class TestLinkedStackMethods(unittest.TestCase):
 
-    def test_constructor_creates_an_empty_stack(self):
-        s = LinkedStack()
-
-        self.assertIsInstance(s, LinkedStack)
-
-    def test_empty_stack_size_should_be_zero(self):
+    def test_len_returns_correct_stack_length(self):
         s = LinkedStack()
         expected_size = 0
-        actual_size = s._size
+        actual_size = len(s)
 
         self.assertEqual(actual_size, expected_size)
 
-    def test_len_should_return_size_of_stack(self):
-        # TODO: Rewrite to manipulate directly the stack, not through the push method.
-        s0 = LinkedStack()      # Empty stack
+        s._size = 1
+        expected_size = 1
+        actual_size = len(s)
 
-        s1 = LinkedStack()
-        s1.push('foo')    # LinkedStack with 1 element
+        self.assertEqual(actual_size, expected_size)
 
-        s2 = LinkedStack()
-        s2.push('foo')
-        s2.push('foo')    # LinkedStack with 2 elements
-
-        self.assertEqual(len(s0), 0)
-        self.assertEqual(len(s1), 1)
-        self.assertEqual(len(s2), 2)
-
-    def test_is_empty_should_return_true_if_stack_is_empty(self):
+    def test_is_empty_returns_correct_boolean_value(self):
         s = LinkedStack()
 
         self.assertTrue(s.is_empty())
+
+        s._size = 1
+
+        self.assertFalse(s.is_empty())
 
     def test_push_should_add_element_to_stack(self):
         s = LinkedStack()
@@ -49,13 +39,18 @@ class TestLinkedStackMethods(unittest.TestCase):
 
     def test_top_should_return_top_element_without_removing_it(self):
         s = LinkedStack()
-        s.push('foo')
-        s.push('bar')
+        e1 = s._Node('foo', None)
+        s._head = e1
+        s._size = 1
+        expected_result = 'bar'
+        e2 = s._Node(expected_result, e1)
+        s._head = e2
+        s._size = 2
 
-        top_element = s.top()
+        result = s.top()
 
-        self.assertEqual(top_element, 'bar')
-        self.assertIn('bar', s._head._element)
+        self.assertEqual(result, expected_result)
+        self.assertIn(expected_result, s._head._element)
 
     def test_top_should_throw_empty_exception_if_stack_is_empty(self):
         s = LinkedStack()
@@ -64,15 +59,20 @@ class TestLinkedStackMethods(unittest.TestCase):
 
     def test_pop_should_return_top_element_and_remove_it_from_stack(self):
         s = LinkedStack()
-        s.push('foo')
-        s.push('bar')
+        e1 = s._Node('foo', None)
+        s._head = e1
+        s._size = 1
+        expected_result = 'bar'
+        e2 = s._Node(expected_result, e1)
+        s._head = e2
+        s._size = 2
 
-        popped_element = s.pop()
+        result = s.pop()
         stack_size = s._size
 
         self.assertEqual(stack_size, 1)
-        self.assertEqual(popped_element, 'bar')
-        self.assertNotIn('bar', s._head._element)
+        self.assertEqual(result, expected_result)
+        self.assertNotIn(expected_result, s._head._element)
 
     def test_pop_should_throw_empty_exception_if_stack_is_empty(self):
         s = LinkedStack()
@@ -82,22 +82,27 @@ class TestLinkedStackMethods(unittest.TestCase):
 
 class TestLinkedQueueMethods(unittest.TestCase):
 
-    def test_constructor_creates_an_empty_queue(self):
-        q = LinkedQueue()
-
-        self.assertIsInstance(q, LinkedQueue)
-
-    def test_empty_queue_size_is_zero(self):
+    def test_len_returns_correct_queue_length(self):
         q = LinkedQueue()
         expected_size = 0
-        actual_size = q._size
+        actual_size = len(q)
 
         self.assertEqual(actual_size, expected_size)
 
-    def test_is_empty_returns_true_if_queue_is_empty(self):
+        q._size = 1
+        expected_size = 1
+        actual_size = len(q)
+
+        self.assertEqual(actual_size, expected_size)
+
+    def test_is_empty_returns_correct_boolean_value(self):
         q = LinkedQueue()
 
-        self.assertTrue(q.is_empty)
+        self.assertTrue(q.is_empty())
+
+        q._size = 1
+
+        self.assertFalse(q.is_empty())
 
     def test_first_returns_first_element_without_removing_it(self):
         q = LinkedQueue()
@@ -151,22 +156,27 @@ class TestLinkedQueueMethods(unittest.TestCase):
 
 class TestCircularQueueMethods(unittest.TestCase):
 
-    def test_constructor_creates_an_empty_queue(self):
-        q = CircularQueue()
-
-        self.assertIsInstance(q, CircularQueue)
-
-    def test_empty_queue_size_is_zero(self):
+    def test_len_returns_correct_queue_length(self):
         q = CircularQueue()
         expected_size = 0
-        actual_size = q._size
+        actual_size = len(q)
 
         self.assertEqual(actual_size, expected_size)
 
-    def test_is_empty_returns_true_if_queue_is_empty(self):
+        q._size = 1
+        expected_size = 1
+        actual_size = len(q)
+
+        self.assertEqual(actual_size, expected_size)
+
+    def test_is_empty_returns_correct_boolean_value(self):
         q = CircularQueue()
 
-        self.assertTrue(q.is_empty)
+        self.assertTrue(q.is_empty())
+
+        q._size = 1
+
+        self.assertFalse(q.is_empty())
 
     def test_first_returns_first_element_without_removing_it(self):
         q = CircularQueue()
@@ -219,13 +229,22 @@ class TestCircularQueueMethods(unittest.TestCase):
 
         self.assertRaises(Empty, q.dequeue)
 
+    def test_rotate_moves_front_element_to_back_of_queue(self):
+        q = CircularQueue()
+        second_element = CircularQueue._Node('bar', None)
+        first_element = CircularQueue._Node('foo', None)
+        q._tail = second_element
+        q._tail._next = first_element
+        q._size = 2
+        expected_result = 'foo'
+
+        q.rotate()
+        result = q._tail._element
+
+        self.assertEqual(result, expected_result)
+
 
 class Test_DoublyLinkedBaseMethods(unittest.TestCase):
-
-    def test_constructor_creates_an_empty_list(self):
-        ll = _DoublyLinkedBase()
-
-        self.assertIsInstance(ll, _DoublyLinkedBase)
 
     def test_constructor_initializes_the_list(self):
         expected_type = _DoublyLinkedBase._Node
@@ -242,6 +261,7 @@ class Test_DoublyLinkedBaseMethods(unittest.TestCase):
     def test_len_returns_the_number_of_elements_in_the_list(self):
         ll = _DoublyLinkedBase()
         self.assertEqual(len(ll), 0)
+
         # directly manipulating ._size property which __len__ uses:
         ll._size = 10
         self.assertEqual(len(ll), 10)
