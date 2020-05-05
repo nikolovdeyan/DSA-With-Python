@@ -144,20 +144,6 @@ class LinkedBinaryTree(BinaryTree):
         self._root = None
         self._size = 0
 
-    def _validate(self, p):
-        """Return associated node, if position is valid."""
-        if not isinstance(p, self.Position):
-            raise TypeError('p must be proper Position type')
-        if p._container is not self:
-            raise ValueError('p does not belong to this container')
-
-    def _make_position(self, node):
-        """Returns a Position instance for a given node.
-
-        Returns None if no node.
-        """
-        return self.Position(self, node) if node is not None else None
-
     def __len__(self):
         """Returns the total number of elements in the tree."""
         return self._size
@@ -203,6 +189,23 @@ class LinkedBinaryTree(BinaryTree):
             count += 1
         return count
 
+    def _validate(self, p):
+        """Return associated node, if position is valid."""
+        if not isinstance(p, self.Position):
+            raise TypeError('p must be proper Position type')
+        if p._container is not self:
+            raise ValueError('p does not belong to this container')
+        if p._node._parent is p._node:
+            raise ValueError('p is no longer valud')
+        return p._node
+
+    def _make_position(self, node):
+        """Returns a Position instance for a given node.
+
+        Returns None if no node.
+        """
+        return self.Position(self, node) if node is not None else None
+
     def _add_root(self, e):
         """Place element e at the root of an empty tree and return new Position.
 
@@ -237,7 +240,7 @@ class LinkedBinaryTree(BinaryTree):
         if node._right is not None:
             raise ValueError('Right child exists.')
         self._size += 1
-        node._left = self._Node(e, node)
+        node._right = self._Node(e, node)
         return self._make_position(node._right)
 
     def _replace(self, p, e):
@@ -276,7 +279,7 @@ class LinkedBinaryTree(BinaryTree):
         node = self._validate(p)
         if not self.is_leaf(p):
             raise ValueError('Position must be leaf.')
-        if not type(self) is type(t1) is type(t2):  # all three must be the same type
+        if not type(self) is type(t1) is type(t2):  # all trees must be the same type
             raise TypeError('The tree types must match.')
         self._size += len(t1) + len(t2)
         if not t1.is_empty():  # attached t1 as left subtree
@@ -288,4 +291,4 @@ class LinkedBinaryTree(BinaryTree):
             t2._root._parent = node
             node._right = t2._root
             t2._root = None  # set t2 instance to empty
-            t1._size = 0
+            t2._size = 0
