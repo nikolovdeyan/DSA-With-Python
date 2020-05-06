@@ -1,4 +1,4 @@
-from empty import Empty
+from pythondsa.src.empty import Empty
 
 
 class ArrayStack:

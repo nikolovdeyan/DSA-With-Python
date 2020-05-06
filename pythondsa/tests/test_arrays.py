@@ -1,5 +1,5 @@
 import unittest
-from arrays import DynamicArray
+from pythondsa.src.arrays import DynamicArray
 
 
 class TestDynamicArrayMethods(unittest.TestCase):

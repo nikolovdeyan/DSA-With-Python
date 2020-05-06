@@ -1,3 +1,6 @@
+from pythondsa.src.singly_linked import LinkedQueue
+
+
 class Tree:
     """Abstract base class representing a tree structure."""
 
@@ -38,6 +41,11 @@ class Tree:
         raise NotImplementedError('must be implemented by subclass')
 
 #   ------------------ Concrete methods ---------------------
+    def __iter__(self):
+        """Generate an iteration of the tree's elements."""
+        for p in self.positions():
+            yield p.element()
+
     def is_root(self, p):
         """Return True if Postition p represents the root of the tree."""
         return self.root() == p
@@ -57,6 +65,23 @@ class Tree:
         else:
             return 1 + self.depth(self.parent(p))
 
+    def preorder(self):
+        """Generate a preorder iteration of positions in the tree."""
+        if not self.is_empty():
+            for p in self._subtree_preorder(self.root()):
+                yield p
+
+    def breadthfirst(self):
+        """Generate a breadth-first iteration of the positions of the tree."""
+        if not self.is_empty():
+            fringe = LinkedQueue()
+            fringe.enqueue(self.root())
+            while not fringe.is_empty():
+                p = fringe.dequeue()
+                yield p
+                for c in self.children(p):
+                    fringe.enqueue(c)
+
     def _height(self, p=None):
         """Returns the height of the subtree rooted at position p.
 
@@ -68,6 +93,13 @@ class Tree:
             return 0
         else:
             return 1 + max(self._height(c) for c in self.children(p))
+
+    def _subtree_preorder(self, p):
+        """Generate a preorder iteration of positions in subtree rooted at p."""
+        yield p
+        for c in self.children(p):
+            for other in self._subtree_preorder(c):
+                yield other
 
 
 class BinaryTree(Tree):

@@ -1,6 +1,6 @@
 import unittest
-from stack import ArrayStack
-from empty import Empty
+from pythondsa.src.stacks import ArrayStack
+from pythondsa.src.empty import Empty
 
 
 class TestArrayStackMethods(unittest.TestCase):
