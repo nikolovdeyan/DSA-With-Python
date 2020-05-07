@@ -358,7 +358,7 @@ class TestLinkedBinaryTreeMethods(unittest.TestCase):
 
         self.assertEqual(result, expected_result)
 
-    def test_TreeABC_preorder_generates_a_preorder_iteration_of_Positions_in_tree(self):
+    def test_TreeABC_preorder_generates_a_correct_iteration_of_Positions(self):
         #  Composing the following tree:
         #          r
         #     rl       rr
@@ -381,8 +381,51 @@ class TestLinkedBinaryTreeMethods(unittest.TestCase):
             self.assertIsInstance(p, lc.Position)
         self.assertEqual(expected_element_order, result_elements)
 
-    def test_TreeABC_breadthfirst_generates_a_breadth_first_iteration_of_Positions_in_tree(self):
+    def test_TreeABC_postorder_generates_a_correct_iteration_of_Positions(self):
+        #  Composing the following tree:
+        #          r
+        #     rl       rr
+        #  rll  rlr rrl  rrr
         lc = LinkedBinaryTree()
+        lc._root = lc._Node('r', None, None, None)
+        lc._root._left = lc._Node('rl', lc._root, None, None)
+        lc._root._right = lc._Node('rr', lc._root, None, None)
+        lc._root._left._left = lc._Node('rll', lc._root._left, None, None)
+        lc._root._left._right = lc._Node('rlr', lc._root._left, None, None)
+        lc._root._right._left = lc._Node('rrl', lc._root._right, None, None)
+        lc._root._right._right = lc._Node('rrr', lc._root._right, None, None)
+        lc._size = 7
+        expected_element_order = ['rll', 'rlr', 'rl', 'rrl', 'rrr', 'rr', 'r']
+
+        result_positions = [p for p in lc.postorder()]
+        result_elements = [p._node._element for p in result_positions]
+
+        for p in result_positions:
+            self.assertIsInstance(p, lc.Position)
+        self.assertEqual(expected_element_order, result_elements)
+
+    def test_TreeABC_breadthfirst_generates_correct_iteration_of_Positions(self):
+        #  Composing the following tree:
+        #          r
+        #     rl       rr
+        #  rll  rlr rrl  rrr
+        lc = LinkedBinaryTree()
+        lc._root = lc._Node('r', None, None, None)
+        lc._root._left = lc._Node('rl', lc._root, None, None)
+        lc._root._right = lc._Node('rr', lc._root, None, None)
+        lc._root._left._left = lc._Node('rll', lc._root._left, None, None)
+        lc._root._left._right = lc._Node('rlr', lc._root._left, None, None)
+        lc._root._right._left = lc._Node('rrl', lc._root._right, None, None)
+        lc._root._right._right = lc._Node('rrr', lc._root._right, None, None)
+        lc._size = 7
+        expected_element_order = ['r', 'rl', 'rr', 'rll', 'rlr', 'rrl', 'rrr']
+
+        result_positions = [p for p in lc.breadthfirst()]
+        result_elements = [p._node._element for p in result_positions]
+
+        for p in result_positions:
+            self.assertIsInstance(p, lc.Position)
+        self.assertEqual(expected_element_order, result_elements)
 
     #  Test BinaryTree ABC's concrete methods:
     def test_BinaryTreeABC_sibling_returns_None_on_position_with_no_sibling(self):
@@ -426,3 +469,49 @@ class TestLinkedBinaryTreeMethods(unittest.TestCase):
         self.assertEqual(first_result, lt.Position(lt, lt._root._left))
         self.assertEqual(second_result, lt.Position(lt, lt._root._right))
         self.assertRaises(StopIteration, children_generator.__next__)
+
+    def test_BinaryTreeABC_inorder_generates_correct_iteration_of_Positions(self):
+        #  Composing the following tree:
+        #          r
+        #     rl       rr
+        #  rll  rlr rrl  rrr
+        lc = LinkedBinaryTree()
+        lc._root = lc._Node('r', None, None, None)
+        lc._root._left = lc._Node('rl', lc._root, None, None)
+        lc._root._right = lc._Node('rr', lc._root, None, None)
+        lc._root._left._left = lc._Node('rll', lc._root._left, None, None)
+        lc._root._left._right = lc._Node('rlr', lc._root._left, None, None)
+        lc._root._right._left = lc._Node('rrl', lc._root._right, None, None)
+        lc._root._right._right = lc._Node('rrr', lc._root._right, None, None)
+        lc._size = 7
+        expected_element_order = ['rll', 'rl', 'rlr', 'r', 'rrl', 'rr', 'rrr']
+
+        result_positions = [p for p in lc.inorder()]
+        result_elements = [p._node._element for p in result_positions]
+
+        for p in result_positions:
+            self.assertIsInstance(p, lc.Position)
+        self.assertEqual(expected_element_order, result_elements)
+
+    def test_BinaryTreeABC_positions_generates_correct_iteration_of_Positions(self):
+        #  Composing the following tree:
+        #          r
+        #     rl       rr
+        #  rll  rlr rrl  rrr
+        lc = LinkedBinaryTree()
+        lc._root = lc._Node('r', None, None, None)
+        lc._root._left = lc._Node('rl', lc._root, None, None)
+        lc._root._right = lc._Node('rr', lc._root, None, None)
+        lc._root._left._left = lc._Node('rll', lc._root._left, None, None)
+        lc._root._left._right = lc._Node('rlr', lc._root._left, None, None)
+        lc._root._right._left = lc._Node('rrl', lc._root._right, None, None)
+        lc._root._right._right = lc._Node('rrr', lc._root._right, None, None)
+        lc._size = 7
+        expected_element_order = ['rll', 'rl', 'rlr', 'r', 'rrl', 'rr', 'rrr']
+
+        result_positions = [p for p in lc.positions()]
+        result_elements = [p._node._element for p in result_positions]
+
+        for p in result_positions:
+            self.assertIsInstance(p, lc.Position)
+        self.assertEqual(expected_element_order, result_elements)

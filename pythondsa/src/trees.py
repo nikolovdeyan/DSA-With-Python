@@ -46,6 +46,10 @@ class Tree:
         for p in self.positions():
             yield p.element()
 
+    def positions(self):
+        """Generate an iteration of the tree's positions."""
+        return self.preorder()
+
     def is_root(self, p):
         """Return True if Postition p represents the root of the tree."""
         return self.root() == p
@@ -69,6 +73,12 @@ class Tree:
         """Generate a preorder iteration of positions in the tree."""
         if not self.is_empty():
             for p in self._subtree_preorder(self.root()):
+                yield p
+
+    def postorder(self):
+        """Generate a postorder iteration of positions in the tree."""
+        if not self.is_empty():
+            for p in self._subtree_postorder(self.root()):
                 yield p
 
     def breadthfirst(self):
@@ -101,6 +111,13 @@ class Tree:
             for other in self._subtree_preorder(c):
                 yield other
 
+    def _subtree_postorder(self, p):
+        """Generate a postorder iteration of positions in subtree rooted at p."""
+        for c in self.children(p):
+            for other in self._subtree_postorder(c):
+                yield other
+        yield p
+
 
 class BinaryTree(Tree):
     """Abstract base class representing a binary tree structure."""
@@ -119,6 +136,11 @@ class BinaryTree(Tree):
         Returns None if p does not have a right child.
         """
         raise NotImplementedError('Must be implemented by subclass.')
+
+    #   ----------------- Overriden methods ---------------------
+    def positions(self):
+        """Generate an iteration of the tree's positions."""
+        return self.inorder()  # overriden method to make inorder the default traversal.
 
     #   ------------------ Concrete methods ---------------------
     def sibling(self, p):
@@ -141,6 +163,22 @@ class BinaryTree(Tree):
             yield self.left(p)
         if self.right(p) is not None:
             yield self.right(p)
+
+    def inorder(self):
+        """Generate an inorder iteration of positions in the tree."""
+        if not self.is_empty():
+            for p in self._subtree_inorder(self.root()):
+                yield p
+
+    def _subtree_inorder(self, p):
+        """Generate an inorder iteration of positions in subtree rooted at p."""
+        if self.left(p) is not None:  # if left child exists, traverse its subtree
+            for other in self._subtree_inorder(self.left(p)):
+                yield other
+        yield p                        # visit p between its subtrees
+        if self.right(p) is not None:  # if right child exists, traverse its subtree
+            for other in self._subtree_inorder(self.right(p)):
+                yield other
 
 
 class LinkedBinaryTree(BinaryTree):
