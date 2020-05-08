@@ -1,6 +1,6 @@
 import unittest
 from pythondsa.src.queues import ArrayQueue, ArrayDeque
-from pythondsa.src.empty import Empty
+from pythondsa.src.exceptions import Empty
 
 
 class TestArrayQueueMethods(unittest.TestCase):

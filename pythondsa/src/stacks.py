@@ -1,12 +1,13 @@
-from pythondsa.src.empty import Empty
+from pythondsa.src.exceptions import Empty, Full
 
 
 class ArrayStack:
     """Stack implementation using a Python list as underlying storage."""
 
-    def __init__(self):
+    def __init__(self, maxlen=None):
         """Creates an empty stack."""
         self._data = []
+        self._maxlen = maxlen
 
     def __len__(self):
         """Returns the number of elements in the stack."""
@@ -16,8 +17,17 @@ class ArrayStack:
         """Returns True if the stack is empty."""
         return len(self._data) == 0
 
+    def is_full(self):
+        """Returns True if the stack is full."""
+        return len(self._data) == self._maxlen
+
     def push(self, e):
-        """Adds an element to the top of the stack."""
+        """Adds an element to the top of the stack.
+
+        Raises Full exception if the stack has assigned maxlen and is full.
+        """
+        if self.is_full():
+            raise Full('Tre stack is full')
         self._data.append(e)
 
     def top(self):
@@ -37,3 +47,4 @@ class ArrayStack:
         if self.is_empty():
             raise Empty('The stack is empty')
         return self._data.pop()
+

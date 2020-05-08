@@ -3,7 +3,7 @@ from unittest.mock import MagicMock
 from pythondsa.src.singly_linked import LinkedStack, LinkedQueue
 from pythondsa.src.circularly_linked import CircularQueue
 from pythondsa.src.doubly_linked import _DoublyLinkedBase, LinkedDeque, PositionalList
-from pythondsa.src.empty import Empty
+from pythondsa.src.exceptions import Empty
 
 
 class TestLinkedStackMethods(unittest.TestCase):

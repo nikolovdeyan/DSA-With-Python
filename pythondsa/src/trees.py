@@ -19,7 +19,7 @@ class Tree:
             """Return True if other does not represent the same location."""
             raise NotImplementedError('must be implemented by subclass')
 
-#   ------------------ Abstract methods ---------------------
+    #   ------------------ Abstract methods ---------------------
     def root(self):
         """Return Position representing the tree's root (or None if empty)."""
         raise NotImplementedError('must be implemented by subclass')
@@ -40,7 +40,7 @@ class Tree:
         """Return the total number of elements in the tree."""
         raise NotImplementedError('must be implemented by subclass')
 
-#   ------------------ Concrete methods ---------------------
+    #   ------------------ Concrete methods ---------------------
     def __iter__(self):
         """Generate an iteration of the tree's elements."""
         for p in self.positions():
@@ -121,7 +121,6 @@ class Tree:
 
 class BinaryTree(Tree):
     """Abstract base class representing a binary tree structure."""
-
     #   ------------------ Abstract methods ---------------------
     def left(self, p):
         """Returns a Position representing p's left child.

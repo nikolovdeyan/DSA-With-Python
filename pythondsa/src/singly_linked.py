@@ -1,4 +1,4 @@
-from pythondsa.src.empty import Empty
+from pythondsa.src.exceptions import Empty
 
 
 class LinkedStack:
