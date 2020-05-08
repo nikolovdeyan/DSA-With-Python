@@ -1,4 +1,4 @@
-from pythondsa.src.singly_linked import LinkedQueue
+from pythondsa.src.queues import LinkedQueue
 
 
 class Tree:

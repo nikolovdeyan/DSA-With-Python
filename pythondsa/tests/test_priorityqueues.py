@@ -1,7 +1,7 @@
 import unittest
 from unittest import mock
-from pythondsa.src.doubly_linked import PositionalList
-from pythondsa.src.priority_queues import UnsortedPriorityQueue
+from pythondsa.src.lists import PositionalList
+from pythondsa.src.priorityqueues import UnsortedPriorityQueue
 
 
 class TestUnsortedPriorityQueue(unittest.TestCase):
@@ -38,7 +38,7 @@ class TestUnsortedPriorityQueue(unittest.TestCase):
 
             self.assertEqual(result, expected_result)
 
-    @mock.patch('pythondsa.src.priority_queues.PositionalList')
+    @mock.patch('pythondsa.src.priorityqueues.PositionalList')
     def test_add_appends_item_with_key_value_pair_to_priority_queue_data(self, pl_mock):
         pq = UnsortedPriorityQueue()
         pq._data = pl_mock

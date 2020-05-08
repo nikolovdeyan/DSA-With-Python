@@ -1,5 +1,5 @@
 from pythondsa.src.exceptions import Empty
-from pythondsa.src.doubly_linked import PositionalList
+from pythondsa.src.lists import PositionalList
 
 
 class PriorityQueueBase:

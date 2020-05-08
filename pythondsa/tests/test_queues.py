@@ -1,5 +1,6 @@
 import unittest
-from pythondsa.src.queues import ArrayQueue, ArrayDeque
+from pythondsa.src.queues import ArrayQueue, ArrayDeque, LinkedDeque
+from pythondsa.src.queues import LinkedQueue, CircularQueue
 from pythondsa.src.exceptions import Empty
 
 
@@ -110,6 +111,170 @@ class TestArrayQueueMethods(unittest.TestCase):
         q = ArrayQueue()
 
         self.assertRaises(Empty, q.dequeue)
+
+
+class TestLinkedQueueMethods(unittest.TestCase):
+
+    def test_len_returns_correct_queue_length(self):
+        q = LinkedQueue()
+        expected_size = 0
+        actual_size = len(q)
+
+        self.assertEqual(actual_size, expected_size)
+
+        q._size = 1
+        expected_size = 1
+        actual_size = len(q)
+
+        self.assertEqual(actual_size, expected_size)
+
+    def test_is_empty_returns_correct_boolean_value(self):
+        q = LinkedQueue()
+
+        self.assertTrue(q.is_empty())
+
+        q._size = 1
+
+        self.assertFalse(q.is_empty())
+
+    def test_first_returns_first_element_without_removing_it(self):
+        q = LinkedQueue()
+        q._head = LinkedQueue._Node('foo', None)
+        q._size = 1
+        expected_result = 'foo'
+
+        result = q.first()
+
+        self.assertEqual(result, expected_result)
+        self.assertIn(expected_result, q._head._element)
+
+    def test_first_raises_empty_exception_if_queue_is_empty(self):
+        q = LinkedQueue()
+
+        self.assertRaises(Empty, q.first)
+
+    def test_enqueue_adds_an_element_to_the_back_of_queue(self):
+        q = LinkedQueue()
+        first_element = LinkedQueue._Node('foo', None)
+        q._head = first_element
+        q._tail = first_element
+        q._size = 1
+        second_element = 'bar'
+
+        q.enqueue(second_element)
+        result = q._tail._element
+
+        self.assertEqual(result, second_element)
+
+    def test_dequeue_returns_and_removes_first_element_from_queue(self):
+        q = LinkedQueue()
+        second_element = LinkedQueue._Node('bar', None)
+        first_element = LinkedQueue._Node('foo', second_element)
+        q._head = first_element
+        q._tail = second_element
+        q._size = 2
+        expected_result = 'foo'
+
+        result = q.dequeue()
+
+        self.assertEqual(q._size, 1)
+        self.assertEqual(result, expected_result)
+        self.assertIsNot(q._head, first_element)
+
+    def test_dequeue_raises_empty_exception_if_queue_is_empty(self):
+        q = LinkedQueue()
+
+        self.assertRaises(Empty, q.dequeue)
+
+
+class TestCircularQueueMethods(unittest.TestCase):
+
+    def test_len_returns_correct_queue_length(self):
+        q = CircularQueue()
+        expected_size = 0
+        actual_size = len(q)
+
+        self.assertEqual(actual_size, expected_size)
+
+        q._size = 1
+        expected_size = 1
+        actual_size = len(q)
+
+        self.assertEqual(actual_size, expected_size)
+
+    def test_is_empty_returns_correct_boolean_value(self):
+        q = CircularQueue()
+
+        self.assertTrue(q.is_empty())
+
+        q._size = 1
+
+        self.assertFalse(q.is_empty())
+
+    def test_first_returns_first_element_without_removing_it(self):
+        q = CircularQueue()
+        newest = CircularQueue._Node('foo', None)
+        newest._next = newest
+        q._tail = newest
+        q._size = 1
+        expected_result = 'foo'
+
+        result = q.first()
+
+        self.assertEqual(result, expected_result)
+        self.assertIn(expected_result, q._tail._next._element)
+
+    def test_first_raises_empty_exception_if_queue_is_empty(self):
+        q = CircularQueue()
+
+        self.assertRaises(Empty, q.first)
+
+    def test_enqueue_adds_an_element_to_the_back_of_queue(self):
+        q = CircularQueue()
+        first_element = CircularQueue._Node('foo', None)
+        first_element._next = first_element
+        q._tail = first_element
+        q._size = 1
+        second_element = 'bar'
+
+        q.enqueue(second_element)
+        result = q._tail._element
+
+        self.assertEqual(result, second_element)
+
+    def test_dequeue_returns_and_removes_first_element_from_queue(self):
+        q = CircularQueue()
+        second_element = CircularQueue._Node('bar', None)
+        first_element = CircularQueue._Node('foo', None)
+        q._tail = second_element
+        q._tail._next = first_element
+        q._size = 2
+        expected_result = 'foo'
+
+        result = q.dequeue()
+
+        self.assertEqual(q._size, 1)
+        self.assertEqual(result, expected_result)
+        self.assertIsNot(q._tail._next, first_element)
+
+    def test_dequeue_raises_empty_exception_if_queue_is_empty(self):
+        q = CircularQueue()
+
+        self.assertRaises(Empty, q.dequeue)
+
+    def test_rotate_moves_front_element_to_back_of_queue(self):
+        q = CircularQueue()
+        second_element = CircularQueue._Node('bar', None)
+        first_element = CircularQueue._Node('foo', None)
+        q._tail = second_element
+        q._tail._next = first_element
+        q._size = 2
+        expected_result = 'foo'
+
+        q.rotate()
+        result = q._tail._element
+
+        self.assertEqual(result, expected_result)
 
 
 class TestArrayDequeMethods(unittest.TestCase):
@@ -280,3 +445,130 @@ class TestArrayDequeMethods(unittest.TestCase):
         d = ArrayDeque()
 
         self.assertRaises(Empty, d.delete_last)
+
+
+class TestLinkedDequeMethods(unittest.TestCase):
+
+    def test_first_raises_empty_exception_if_deque_is_empty(self):
+        d = LinkedDeque()
+
+        self.assertRaises(Empty, d.first)
+
+    def test_first_returns_first_element_without_removing_it(self):
+        d = LinkedDeque()
+        expected_element = 'foo'
+        #  add first element
+        n1 = LinkedDeque._Node(expected_element, d._header, d._trailer)
+        d._header._next = n1
+        d._trailer._prev = n1
+        d._size = 1
+        #  add second element
+        n2 = LinkedDeque._Node('bar', n1, d._trailer)
+        n1._next = n2
+        d._trailer._prev = n2
+        d._size = 2
+
+        returned_element = d.first()
+
+        #  check the return element:
+        self.assertIs(returned_element, expected_element)
+        #  check size of the deque has not changed:
+        self.assertEqual(d._size, 2)
+
+    def test_last_raises_empty_exception_if_deque_is_empty(self):
+        d = LinkedDeque()
+
+        self.assertRaises(Empty, d.last)
+
+    def test_last_returns_last_element_without_removing_it(self):
+        d = LinkedDeque()
+        expected_element = 'bar'
+        #  add first element
+        n1 = LinkedDeque._Node('foo', d._header, d._trailer)
+        d._header._next = n1
+        d._trailer._prev = n1
+        d._size = 1
+        #  add second element
+        n2 = LinkedDeque._Node(expected_element, n1, d._trailer)
+        n1._next = n2
+        d._trailer._prev = n2
+        d._size = 2
+
+        returned_element = d.last()
+
+        #  check the return element:
+        self.assertIs(returned_element, expected_element)
+        #  check size of the deque has not changed:
+        self.assertEqual(d._size, 2)
+
+    def test_insert_first_adds_an_element_to_the_front_of_the_deque(self):
+        d = LinkedDeque()
+        expected_element = 'foo'
+
+        d.insert_first(expected_element)
+
+        exp_element_node = d._header._next
+        self.assertIs(d._header._next._element, expected_element)
+        self.assertIs(exp_element_node._next, d._trailer)
+
+    def test_insert_last_adds_an_element_to_the_back_of_the_deque(self):
+        d = LinkedDeque()
+        expected_element = 'foo'
+
+        d.insert_last(expected_element)
+
+        exp_element_node = d._trailer._prev
+        self.assertIs(d._trailer._prev._element, expected_element)
+        self.assertIs(exp_element_node._prev, d._header)
+
+    def test_delete_first_raises_empty_exception_if_deque_is_empty(self):
+        d = LinkedDeque()
+
+        self.assertRaises(Empty, d.delete_first)
+
+    def test_delete_first_returns_and_removes_from_the_front_of_the_deque(self):
+        d = LinkedDeque()
+        expected_element = 'foo'
+        #  add first element
+        n1 = LinkedDeque._Node(expected_element, d._header, d._trailer)
+        d._header._next = n1
+        d._trailer._prev = n1
+        d._size = 1
+        #  add second element
+        n2 = LinkedDeque._Node('bar', n1, d._trailer)
+        n1._next = n2
+        d._trailer._prev = n2
+        d._size = 2
+
+        deleted_element = d.delete_first()
+
+        #  check the return element:
+        self.assertIs(deleted_element, expected_element)
+        #  check size of the deque is updated:
+        self.assertEqual(d._size, 1)
+
+    def test_delete_last_raises_empty_exception_if_deque_is_empty(self):
+        d = LinkedDeque()
+
+        self.assertRaises(Empty, d.delete_last)
+
+    def test_delete_last_returns_and_removes_from_the_front_of_the_deque(self):
+        d = LinkedDeque()
+        expected_element = 'bar'
+        #  add first element
+        n1 = LinkedDeque._Node('foo', d._header, d._trailer)
+        d._header._next = n1
+        d._trailer._prev = n1
+        d._size = 1
+        #  add second element
+        n2 = LinkedDeque._Node(expected_element, n1, d._trailer)
+        n1._next = n2
+        d._trailer._prev = n2
+        d._size = 2
+
+        deleted_element = d.delete_last()
+
+        #  check the return element:
+        self.assertIs(deleted_element, expected_element)
+        #  check size of the deque is updated:
+        self.assertEqual(d._size, 1)
