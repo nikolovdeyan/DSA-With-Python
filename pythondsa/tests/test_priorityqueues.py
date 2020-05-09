@@ -1,7 +1,8 @@
 import unittest
 from unittest import mock
 from pythondsa.src.lists import PositionalList
-from pythondsa.src.priorityqueues import UnsortedPriorityQueue
+from pythondsa.src.priorityqueues import UnsortedPriorityQueue, HeapPriorityQueue
+from pythondsa.src.exceptions import Empty
 
 
 class TestUnsortedPriorityQueue(unittest.TestCase):
@@ -49,3 +50,27 @@ class TestUnsortedPriorityQueue(unittest.TestCase):
         result_item = pl_mock.add_last.call_args.args[0]
 
         self.assertEqual(expected_item, result_item)
+
+    def test_min_raises_Empty_exception_when_queue_is_empty(self):
+        pq = UnsortedPriorityQueue()
+
+        self.assertRaises(Empty, pq.min)
+
+
+class TestHeapPriorityQueue(unittest.TestCase):
+
+    def test_len_returns_the_correct_number_of_items_in_priority_queue(self):
+        pq = HeapPriorityQueue()
+
+        self.assertEqual(len(pq), 0)
+
+        pq._data = [
+            pq._Item(1, 'foo'),
+            pq._Item(2, 'bar'),
+            pq._Item(3, 'baz'),
+        ]
+
+        self.assertEqual(len(pq), 3)
+
+    def test_add(self):
+        pass

@@ -1,3 +1,4 @@
+from random import randrange
 from collections.abc import MutableMapping
 
 
@@ -20,6 +21,48 @@ class MapBase(MutableMapping):
 
         def __lt__(self, other):
             return self._key < other._key
+
+
+class HashMapBase(MapBase):
+    """Abstract base class for map using hash-table with MAD compression."""
+
+    def __init__(self, cap=11, p=109345121):
+        """Create an empty hash-table map."""
+        self._table = cap * [None]
+        self._n = 0
+        self._prime = p
+        self._scale = 1 + randrange(p - 1)
+        self._shift = randrange(p)
+
+    def _hash_function(self, k):
+        return (hash(k) * self._scale + self._shift) % self._prime % len(self._table)
+
+    def __len__(self):
+        return self._n
+
+    def __getitem__(self, k):
+        j = self._hash_function(k)
+        return self._bucket_getitem(j, k)
+
+    def __setitem__(self, k, v):
+        j = self._hash_function(k)
+        self._bucket_setitem(j, k, v)
+        # Keep load factor <= 0.5
+        if self._n > len(self._table) // 2:
+            # number 2^x - 1 is often prime
+            self._resize(2 * len(self._table) - 1)
+
+    def __delitem__(self, k):
+        j = self._hash_function(k)
+        self._bucket_delitem(j, k)
+        self._n -= 1
+
+    def _resize(self, c):
+        old = list(self.items())
+        self._table = c * [None]
+        self._n = 0
+        for (k, v) in old:
+            self[k] = v
 
 
 class UnsortedTableMap(MapBase):
@@ -66,3 +109,85 @@ class UnsortedTableMap(MapBase):
         """Generate iterations of the map's keys."""
         for item in self._table:
             yield item._key
+
+
+class ChainHashMap(HashMapBase):
+    """Hash map implemented with separate chaining for collision resolution."""
+
+    def _bucket_getitem(self, j, k):
+        bucket = self._table[j]
+        if bucket is None:
+            raise KeyError('Key Error: ' + repr(k))
+        return bucket[k]
+
+    def _bucket_setitem(self, j, k, v):
+        if self._table[j] is None:
+            self._table[j] = UnsortedTableMap()
+        oldsize = len(self._table[j])
+        self._table[j][k] = v
+        if len(self._table[j]) > oldsize:
+            self._n += 1
+
+    def _bucket_delitem(self, j, k):
+        bucket = self._table[j]
+        if bucket is None:
+            raise KeyError('Key Error: ' + repr(k))
+        del bucket[k]
+
+    def __iter__(self):
+        for bucket in self._table:
+            if bucket is not None:
+                for key in bucket:
+                    yield key
+
+
+class ProbeHashMap(HashMapBase):
+    """Hash map implemented with linear probing for collision resolution."""
+    _AVAIL = object()  # sentinel marks locations of previous deletions
+
+    def _is_available(self, j):
+        """Return True if index j is available in table."""
+        return self._table[j] is None or self._table[j] is ProbeHashMap._AVAIL
+
+    def _find_slot(self, j, k):
+        """Search for key k in bucket at index j.
+
+        Return (success, index) tuple, described as follows:
+        - if match was found, success is True and index denotes its location.
+        - if no match found, success is False and index denotes first available slot.
+        """
+        first_avail = None
+        while True:
+            if self._is_available(j):
+                if first_avail is None:     # mark this as first available
+                    first_avail = j
+                if self._table[j] is None:  # search has failed
+                    return (False, first_avail)
+            elif k == self._table[j]._key:  # found a match
+                return (True, j)
+            j = (j + 1) % len(self._table)  # keep looking
+
+    def _bucket_getitem(self, j, k):
+        found, s = self._find_slot(j, k)
+        if not found:
+            raise KeyError('Key Error: ' + repr(k))
+        return self._table[s]._value
+
+    def _bucket_setitem(self, j, k, v):
+        found, s = self._find_slot(j, k)
+        if not found:
+            self._table[s] = self._Item(k, v)
+            self._n += 1
+        else:
+            self._table[s]._value = v
+
+    def _bucket_delitem(self, j, k):
+        found, s = self._find_slot(j, k)
+        if not found:
+            raise KeyError('Key Error: ' + repr(k))
+        self._table[s] = ProbeHashMap._AVAIL  # mark as vacated
+
+    def __iter__(self):
+        for j in range(len(self._table)):
+            if not self._is_available(j):
+                yield self._table[j]._key
