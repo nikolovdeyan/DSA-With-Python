@@ -193,11 +193,47 @@ class ArrayDeque:
 
     DEFAULT_CAPACITY = 10
 
-    def __init__(self):
+    def __init__(self, maxlen=None):
         """Create an empty deque."""
-        self._data = [None] * ArrayDeque.DEFAULT_CAPACITY
         self._size = 0
         self._front = 0
+        self._maxlen = maxlen
+        if not self._maxlen or self._maxlen >= ArrayDeque.DEFAULT_CAPACITY:
+            self._data = [None] * ArrayDeque.DEFAULT_CAPACITY
+        else:
+            self._data = [None] * self._maxlen
+
+    def __getitem__(self, i):
+        """Return a reference to the element at index i.
+
+        Raise IndexError if the requested index is not in range.
+        """
+        if isinstance(i, slice):
+            raise NotImplementedError('Deque does not currently support slicing.')
+        elif isinstance(i, int):
+            if i < self._size * -1 or i > self._size - 1:
+                raise IndexError('Deque index out of range.')
+            if i < 0:  # Handle negative indices
+                index = (self._front + self._size + i) % len(self._data)
+            else:
+                index = (self._front + i) % len(self._data)
+            return self._data[index]
+        else:
+            raise TypeError('Invalid argument type.')
+
+    def __setitem__(self, i, v):
+        if isinstance(i, slice):
+            raise NotImplementedError('Deque does not currently support slicing.')
+        elif isinstance(i, int):
+            if i < self._size * -1 or i > self._size - 1:
+                raise IndexError('Deque index out of range.')
+            if i < 0:  # Handle negative indices
+                index = (self._front + self._size + i) % len(self._data)
+            else:
+                index = (self._front + i) % len(self._data)
+            self._data[index] = v
+        else:
+            raise TypeError('Invalid argument type.')
 
     def __len__(self):
         """Return the number of elements in the deque."""
@@ -231,6 +267,51 @@ class ArrayDeque:
         last_in_line = (self._front + self._size) % len(self._data)
         self._data[last_in_line] = e
         self._size += 1
+
+    def clear(self):
+        """Remove all elements from the deque leaving it with length 0."""
+        self._size = 0
+        self._front = 0
+        if not self._maxlen or self._maxlen >= ArrayDeque.DEFAULT_CAPACITY:
+            self._data = [None] * ArrayDeque.DEFAULT_CAPACITY
+        else:
+            self._data = [None] * self._maxlen
+
+    def count(self, value):
+        """Return the number of matches for value in deque."""
+        value_count = 0
+        for i in range(self._size):
+            if self._data[(self._front + i) % len(self._data)] == value:
+                value_count += 1
+        return value_count
+
+    def remove(self, value):
+        """Remove the first occurrence of value.
+
+        Raise a ValueError if value not found.
+        """
+        for i in range(self._size):
+            current = (self._front + i) % len(self._data)
+            if self._data[current] == value:
+                # value found, shift elements from closer end of deque.
+                if i < self._size // 2:
+                    # value in first half or array, shift items from left
+                    for j in range(current):
+                        self._data[current] = self._data[current - 1]
+                    return
+                else:
+                    # value in second half of array, shift items from right
+                    return
+        raise ValueError('value not found in deque.')
+
+    def rotate(self, n=1):
+        """Rotate the deque n steps to the right. If n is negative, rotate to the left."""
+        if n >= 0:
+            for step in range(n):
+                self.add_first(self.delete_last())
+        else:
+            for step in range(abs(n)):
+                self.add_last(self.delete_first())
 
     def delete_first(self):
         """Delete an element from the front of the deque.
@@ -280,6 +361,10 @@ class ArrayDeque:
     def is_empty(self):
         """Return True if the deque does not contain any elements."""
         return self._size == 0
+
+    def is_full(self):
+        """Return True if the deque has an assigned maxlen and is full."""
+        return len(self._data) == self._maxlen
 
 
 class LinkedDeque(_DoublyLinkedBase):

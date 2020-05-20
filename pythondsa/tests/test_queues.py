@@ -65,7 +65,7 @@ class TestArrayQueueMethods(unittest.TestCase):
         self.assertEqual(result, expected_result)
         self.assertIn(expected_result, q._data)
 
-    def test_first_raises_empty_exception_if_queue_is_empty(self):
+    def test_first_raises_Empty_exception_if_queue_is_empty(self):
         q = ArrayQueue()
 
         self.assertRaises(Empty, q.first)
@@ -107,7 +107,7 @@ class TestArrayQueueMethods(unittest.TestCase):
         self.assertEqual(result, expected_result)
         self.assertNotIn('foo', q._data)
 
-    def test_dequeue_raises_empty_exception_if_queue_is_empty(self):
+    def test_dequeue_raises_Empty_exception_if_queue_is_empty(self):
         q = ArrayQueue()
 
         self.assertRaises(Empty, q.dequeue)
@@ -148,7 +148,7 @@ class TestLinkedQueueMethods(unittest.TestCase):
         self.assertEqual(result, expected_result)
         self.assertIn(expected_result, q._head._element)
 
-    def test_first_raises_empty_exception_if_queue_is_empty(self):
+    def test_first_raises_Empty_exception_if_queue_is_empty(self):
         q = LinkedQueue()
 
         self.assertRaises(Empty, q.first)
@@ -181,7 +181,7 @@ class TestLinkedQueueMethods(unittest.TestCase):
         self.assertEqual(result, expected_result)
         self.assertIsNot(q._head, first_element)
 
-    def test_dequeue_raises_empty_exception_if_queue_is_empty(self):
+    def test_dequeue_raises_Empty_exception_if_queue_is_empty(self):
         q = LinkedQueue()
 
         self.assertRaises(Empty, q.dequeue)
@@ -224,7 +224,7 @@ class TestCircularQueueMethods(unittest.TestCase):
         self.assertEqual(result, expected_result)
         self.assertIn(expected_result, q._tail._next._element)
 
-    def test_first_raises_empty_exception_if_queue_is_empty(self):
+    def test_first_raises_Empty_exception_if_queue_is_empty(self):
         q = CircularQueue()
 
         self.assertRaises(Empty, q.first)
@@ -257,7 +257,7 @@ class TestCircularQueueMethods(unittest.TestCase):
         self.assertEqual(result, expected_result)
         self.assertIsNot(q._tail._next, first_element)
 
-    def test_dequeue_raises_empty_exception_if_queue_is_empty(self):
+    def test_dequeue_raises_Empty_exception_if_queue_is_empty(self):
         q = CircularQueue()
 
         self.assertRaises(Empty, q.dequeue)
@@ -278,6 +278,15 @@ class TestCircularQueueMethods(unittest.TestCase):
 
 
 class TestArrayDequeMethods(unittest.TestCase):
+
+    def test_constructor_with_maxlen_less_than_default_capacity_shrinks_size(self):
+        expected_result = 5
+
+        d = ArrayDeque(maxlen=expected_result)  # less than DEFAULT_CAPACITY
+        result = len(d._data)
+
+        self.assertEqual(result, expected_result)
+
     def test_len_returns_size_of_deque(self):
         d = ArrayDeque()
         expected_result = 0
@@ -293,6 +302,144 @@ class TestArrayDequeMethods(unittest.TestCase):
         result = len(d)
 
         self.assertEqual(result, expected_result)
+
+    def test_getitem_raises_IndexError_with_integer_index_out_of_range(self):
+        d = ArrayDeque()
+        elements = ['foo', 'bar', 'baz']
+        d._data[2:5] = elements
+        d._front = 2
+        d._size = 3
+
+        self.assertRaises(IndexError, d.__getitem__, 3)
+        self.assertRaises(IndexError, d.__getitem__, -4)
+
+    def test_getitem_raises_NotImplementedError_with_slice_object_parameter(self):
+        d = ArrayDeque()
+        elements = ['foo', 'bar', 'baz', 'spam', 'eggs']
+        d._data[2:7] = elements
+        d._front = 2
+        d._size = 5
+
+        self.assertRaises(NotImplementedError, d.__getitem__, slice(0, 2))
+
+    def test_getitem_returns_correct_element_with_positive_integer_index(self):
+        d = ArrayDeque()
+        expected_result = 'foo'
+        elements = [expected_result, 'bar', 'baz']
+        d._data[2:5] = elements
+        d._front = 2
+        d._size = 3
+
+        result = d[0]
+
+        self.assertEqual(result, expected_result)
+
+    def test_getitem_returns_correct_element_with_negative_integer_index(self):
+        d = ArrayDeque()
+        expected_result = 'foo'
+        elements = [expected_result, 'bar', 'baz']
+        d._data[2:5] = elements
+        d._front = 2
+        d._size = 3
+
+        result = d[-3]
+
+        self.assertEqual(result, expected_result)
+
+    def test_setitem_raises_IndexError_with_integer_index_out_of_range(self):
+        d = ArrayDeque()
+        elements = ['foo', 'bar', 'baz']
+        d._data[2:5] = elements
+        d._front = 2
+        d._size = 3
+
+        self.assertRaises(IndexError, d.__setitem__, 3, 'nope')
+        self.assertRaises(IndexError, d.__setitem__, -4, 'nope')
+
+    def test_setitem_raises_NotImplementedError_with_slice_object_parameter(self):
+        d = ArrayDeque()
+        elements = ['foo', 'bar', 'baz', 'spam', 'eggs']
+        d._data[2:7] = elements
+        d._front = 2
+        d._size = 5
+
+        self.assertRaises(NotImplementedError, d.__setitem__, slice(1, 3), ['zap', 'tap'])
+
+    def test_setitem_replaces_correct_element_with_positive_integer_index(self):
+        d = ArrayDeque()
+        expected_result = 'spam'
+        elements = ['foo', 'bar', 'baz']
+        d._data[2:5] = elements
+        d._front = 2
+        d._size = 3
+
+        d[0] = expected_result
+        result = d[0]
+
+        self.assertEqual(result, expected_result)
+
+    def test_setitem_replaces_correct_element_with_negative_integer_index(self):
+        d = ArrayDeque()
+        expected_result = 'spam'
+        elements = ['foo', 'bar', 'baz']
+        d._data[2:5] = elements
+        d._front = 2
+        d._size = 3
+
+        d[-3] = expected_result
+        result = d[-3]
+
+        self.assertEqual(result, expected_result)
+
+    def test_clear_resets_deque_resizes_data_to_default_capacity_without_maxlen(self):
+        d = ArrayDeque()
+        elements = ['foo', 'bar', 'baz']
+        d._data[2:5] = elements
+        d._front = 2
+        d._size = 3
+
+        d.clear()
+
+        self.assertEqual(d._size, 0)
+        self.assertEqual(d._front, 0)
+        self.assertEqual(len(d._data), d.DEFAULT_CAPACITY)
+
+    def test_clear_resets_deque_resizes_data_to_maxlen_with_maxlen_provided(self):
+        d = ArrayDeque(maxlen=5)
+        elements = ['foo', 'bar', 'baz']
+        d._data[2:5] = elements
+        d._front = 2
+        d._size = 3
+
+        d.clear()
+
+        self.assertEqual(d._size, 0)
+        self.assertEqual(d._front, 0)
+        self.assertEqual(len(d._data), d._maxlen)
+
+    def test_rotate_shifts_deque_to_right_with_positive_steps_integer(self):
+        d = ArrayDeque()
+        elements = ['foo', 'bar', 'baz']
+        expected_elements = ['bar', 'baz', 'foo']
+        d._data[2:5] = elements
+        d._front = 2
+        d._size = 3
+
+        d.rotate(2)
+
+        self.assertEqual(d._data[0:3], expected_elements)
+
+    def test_rotate_shifts_deque_to_left_with_negative_steps_integer(self):
+        d = ArrayDeque()
+        elements = ['foo', 'bar', 'baz']
+        expected_elements = ['baz', 'foo', 'bar']
+        d._data[0:3] = elements
+        d._front = 0
+        d._size = 3
+
+        d.rotate(-2)
+
+        self.assertEqual(d._data[2:5], expected_elements)
 
     def test_resize_increases_capacity(self):
         d = ArrayDeque()
@@ -314,6 +461,63 @@ class TestArrayDequeMethods(unittest.TestCase):
 
         self.assertSequenceEqual(d._data, expected_sequence)
 
+    def test_remove_deletes_first_instance_of_value_in_deque(self):
+        d = ArrayDeque()
+        elements = ['foo', 'bar', 'baz', 'bar']
+        d._data[2:6] = elements
+        d._size = 4
+        d._front = 2
+
+        d.remove('bar')
+
+        self.assertEqual(d._size, 3)
+        self.assertIn(d._data, 'bar')
+        self.assertEqual(d._data[3:6], ['foo', 'baz', 'bar'])
+
+    def test_remove_shifts_elements_from_shorter_end_of_deque(self):
+        d = ArrayDeque()
+        elements = ['1st', '2nd', '3rd', '4th', '5th', '6th', '7th']
+        d._data[0:8] = elements
+        d._front = 0
+        d._size = 7
+
+        # ['1st', '2nd', '3rd', '4th', '5th', '6th', '7th']
+        #    0      1      2      3      4      5      6
+        # for i in range self._size -> i in range(7):
+        # current = 1
+        # 1 < self._size // 2 -> 1 < 3
+        # 
+
+        d.remove('2nd')
+
+        self.assertEqual(d._data[1:8], ['1st', '3rd', '4th', '5th', '6th', '7th'])
+        self.assertEqual(d._front, 1)  # front moved as elements left of center shifted
+
+        d.remove('6th')
+
+        self.assertEqual(d._data[1:7], ['1st', '3rd', '4th', '5th', '7th'])
+        self.assertEqual(d._front, 1)  # the front has not moved
+
+    def test_remove_raises_ValueError_when_value_not_in_deque(self):
+        d = ArrayDeque()
+        elements = ['foo', 'bar', 'baz', 'bar']
+        d._data[2:6] = elements
+        d._size = 4
+        d._front = 2
+
+        self.assertRaises(ValueError, d.remove, 'spam')
+
+    def test_count_returns_correct_number_of_matches_for_value_in_deque(self):
+        d = ArrayDeque()
+        elements = ['foo', 'bar', 'baz', 'bar']
+        d._data[-2:2] = elements
+        d._size = 4
+        d._front = 8
+
+        self.assertEqual(2, d.count('bar'))
+        self.assertEqual(1, d.count('foo'))
+        self.assertEqual(0, d.count('spam'))
+
     def test_is_empty_returns_correct_boolean_value(self):
         d = ArrayDeque()
 
@@ -325,6 +529,22 @@ class TestArrayDequeMethods(unittest.TestCase):
         d._front = 2
 
         self.assertFalse(d.is_empty())
+
+    def test_is_full_returns_correct_boolean_value(self):
+        d = ArrayDeque()
+        elements = ['foo', 'bar', 'baz', 'spam', 'eggs']
+        d._data[2:7] = elements
+        d._size = 5
+        d._front = 2
+
+        self.assertFalse(d.is_full())
+
+        d = ArrayDeque(maxlen=5)
+        elements = ['foo', 'bar', 'baz', 'spam', 'eggs']
+        d._data = elements
+        d._size = 5
+
+        self.assertTrue(d.is_full())
 
     def test_first_returns_first_element_without_removing_it(self):
         elements = ['foo', 'bar', 'baz']
@@ -339,7 +559,7 @@ class TestArrayDequeMethods(unittest.TestCase):
         self.assertEqual(result, expected_result)
         self.assertIn(expected_result, d._data)
 
-    def test_first_raises_empty_exception_if_deque_is_empty(self):
+    def test_first_raises_Empty_exception_if_deque_is_empty(self):
         d = ArrayDeque()
 
         self.assertRaises(Empty, d.first)
@@ -357,7 +577,7 @@ class TestArrayDequeMethods(unittest.TestCase):
         self.assertEqual(result, expected_result)
         self.assertIn(expected_result, d._data)
 
-    def test_last_raises_empty_exception_if_deque_is_empty(self):
+    def test_last_raises_Empty_exception_if_deque_is_empty(self):
         d = ArrayDeque()
 
         self.assertRaises(Empty, d.last)
@@ -422,7 +642,7 @@ class TestArrayDequeMethods(unittest.TestCase):
         self.assertEqual(result, expected_result)
         self.assertNotIn('foo', d._data)
 
-    def test_delete_first_raises_empty_exception_if_deque_is_empty(self):
+    def test_delete_first_raises_Empty_exception_if_deque_is_empty(self):
         d = ArrayDeque()
 
         self.assertRaises(Empty, d.delete_first)
@@ -441,7 +661,7 @@ class TestArrayDequeMethods(unittest.TestCase):
         self.assertEqual(result, expected_result)
         self.assertNotIn('bar', d._data)
 
-    def test_delete_last_raises_empty_exception_if_deque_is_empty(self):
+    def test_delete_last_raises_Empty_exception_if_deque_is_empty(self):
         d = ArrayDeque()
 
         self.assertRaises(Empty, d.delete_last)
@@ -449,7 +669,7 @@ class TestArrayDequeMethods(unittest.TestCase):
 
 class TestLinkedDequeMethods(unittest.TestCase):
 
-    def test_first_raises_empty_exception_if_deque_is_empty(self):
+    def test_first_raises_Empty_exception_if_deque_is_empty(self):
         d = LinkedDeque()
 
         self.assertRaises(Empty, d.first)
@@ -475,7 +695,7 @@ class TestLinkedDequeMethods(unittest.TestCase):
         #  check size of the deque has not changed:
         self.assertEqual(d._size, 2)
 
-    def test_last_raises_empty_exception_if_deque_is_empty(self):
+    def test_last_raises_Empty_exception_if_deque_is_empty(self):
         d = LinkedDeque()
 
         self.assertRaises(Empty, d.last)
@@ -521,7 +741,7 @@ class TestLinkedDequeMethods(unittest.TestCase):
         self.assertIs(d._trailer._prev._element, expected_element)
         self.assertIs(exp_element_node._prev, d._header)
 
-    def test_delete_first_raises_empty_exception_if_deque_is_empty(self):
+    def test_delete_first_raises_Empty_exception_if_deque_is_empty(self):
         d = LinkedDeque()
 
         self.assertRaises(Empty, d.delete_first)
@@ -547,7 +767,7 @@ class TestLinkedDequeMethods(unittest.TestCase):
         #  check size of the deque is updated:
         self.assertEqual(d._size, 1)
 
-    def test_delete_last_raises_empty_exception_if_deque_is_empty(self):
+    def test_delete_last_raises_Empty_exception_if_deque_is_empty(self):
         d = LinkedDeque()
 
         self.assertRaises(Empty, d.delete_last)

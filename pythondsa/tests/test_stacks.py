@@ -48,7 +48,7 @@ class TestArrayStackMethods(unittest.TestCase):
 
         self.assertIn(expected_element, s._data)
 
-    def test_push_raises_full_exception_with_full_stack(self):
+    def test_push_raises_Full_exception_with_full_stack(self):
         s = ArrayStack(maxlen=2)
         s._data = ['foo', 'bar']
 
@@ -64,7 +64,7 @@ class TestArrayStackMethods(unittest.TestCase):
         self.assertEqual(top_element, 'bar')
         self.assertIn('bar', s._data)
 
-    def test_top_raises_empty_exception_if_stack_is_empty(self):
+    def test_top_raises_Empty_exception_if_stack_is_empty(self):
         s = ArrayStack()
 
         self.assertRaises(Empty, s.top)
@@ -80,7 +80,7 @@ class TestArrayStackMethods(unittest.TestCase):
         self.assertEqual(result, expected_result)
         self.assertNotIn(expected_result, s._data)
 
-    def test_pop_raises_empty_exception_if_stack_is_empty(self):
+    def test_pop_raises_Empty_exception_if_stack_is_empty(self):
         s = ArrayStack()
 
         self.assertRaises(Empty, s.top)
@@ -117,7 +117,7 @@ class TestLinkedStackMethods(unittest.TestCase):
 
         self.assertIn('foo', s._head._element)
 
-    def test_top_should_return_top_element_without_removing_it(self):
+    def test_top_returns_top_element_without_removing_it(self):
         s = LinkedStack()
         e1 = s._Node('foo', None)
         s._head = e1
@@ -132,12 +132,12 @@ class TestLinkedStackMethods(unittest.TestCase):
         self.assertEqual(result, expected_result)
         self.assertIn(expected_result, s._head._element)
 
-    def test_top_should_throw_empty_exception_if_stack_is_empty(self):
+    def test_top_raises_Empty_exception_if_stack_is_empty(self):
         s = LinkedStack()
 
         self.assertRaises(Empty, s.top)
 
-    def test_pop_should_return_top_element_and_remove_it_from_stack(self):
+    def test_pop_returns_top_element_and_remove_it_from_stack(self):
         s = LinkedStack()
         e1 = s._Node('foo', None)
         s._head = e1
@@ -154,7 +154,7 @@ class TestLinkedStackMethods(unittest.TestCase):
         self.assertEqual(result, expected_result)
         self.assertNotIn(expected_result, s._head._element)
 
-    def test_pop_should_throw_empty_exception_if_stack_is_empty(self):
+    def test_pop_raises_Empty_exception_if_stack_is_empty(self):
         s = LinkedStack()
 
         self.assertRaises(Empty, s.top)

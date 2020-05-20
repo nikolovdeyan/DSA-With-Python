@@ -72,5 +72,3 @@ class TestHeapPriorityQueue(unittest.TestCase):
 
         self.assertEqual(len(pq), 3)
 
-    def test_add(self):
-        pass
