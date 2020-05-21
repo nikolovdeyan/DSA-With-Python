@@ -1,0 +1,269 @@
+* ACTV 5. Array-Based Sequences [1/3]
+** DONE Reinforcement [12/12]
+*** DONE R-5.1
++ Execute the experiment from Code Fragment 5.1 and compare the results on your system to those we report in Code Fragment 5.2.
+
++ Code: 
+#+BEGIN_SRC python
+import sys
+def get_list_length_and_size(n):
+    data = []
+    for k in range(n):
+        a = len(data)
+        b = sys.getsizeof(data)
+        print(f'Length: {a:3d}; Size in bytes: {b:4d}')
+        data.append(None)
+#+END_SRC
+
++ Results:
+|--------+----------------------+---------------------------|
+| Length | Size in Bytes (book) | Size in Bytes (my result) |
+|--------+----------------------+---------------------------|
+|      0 |                   72 |                        56 |
+|      1 |                  104 |                        88 |
+|      2 |                  104 |                        88 |
+|      3 |                  104 |                        88 |
+|      4 |                  104 |                        88 |
+|      5 |                  136 |                       120 |
+|      6 |                  136 |                       120 |
+|      7 |                  136 |                       120 |
+|      8 |                  136 |                       120 |
+|      9 |                  200 |                       184 |
+|     10 |                  200 |                       184 |
+|     11 |                  200 |                       184 |
+|     12 |                  200 |                       184 |
+|     13 |                  200 |                       184 |
+|     14 |                  200 |                       184 |
+|     15 |                  200 |                       184 |
+|     16 |                  200 |                       184 |
+|     17 |                  272 |                       256 |
+|     18 |                  272 |                       256 |
+|     19 |                  272 |                       256 |
+|     20 |                  272 |                       256 |
+|     21 |                  272 |                       256 |
+|     22 |                  272 |                       256 |
+|     23 |                  272 |                       256 |
+|     24 |                  272 |                       256 |
+|     25 |                  272 |                       256 |
+|     26 |                  352 |                       336 |
+|--------+----------------------+---------------------------|
+
+*** DONE R-5.2
++ In Code Fragment 5.1, we pefrorm an experiment to compare the length of a Python list to its underlying memory usage. Determining the sequence of array sizes requires a manual inspection of the output of that program. Redesign the experiment so that the program outputs only those values of ~k~ at which the existing capacity is exhausted. For example, on a system consistent with the results of Code Fragment 5.2, your program should output that the sequence of array capacities are 0, 4, 8, 16, 25, ....
+  
++ Solution:
+#+BEGIN_SRC python
+import sys
+def get_exhausted_capacity_elements(n):
+    data = []
+    current_size = sys.getsizeof(data)
+    result = []
+    for k in range(n):
+        a = len(data)
+        b = sys.getsizeof(data)
+        if b > current_size:
+            result.append(k-1)  # the last element of prev sequence
+            current_size = b
+        data.append(None)
+    print(', '.join(str(el) for el in result))
+#+END_SRC
+
+*** DONE R-5.3
++ Modify the experiment from Code Fragment 5.1 in order to demonstrate that Python's list class occasionally shrinks the size of its underlying array when elements are popped from a list.
+
++ Code:
+#+BEGIN_SRC python
+import sys
+def get_list_length_and_size(n):
+    data = [None] * n
+    for k in range(n):
+        a = len(data)
+        b = sys.getsizeof(data)
+        print(f'Length: {a:3d}; Size in bytes: {b:4d}')
+        data.pop()
+#+END_SRC
+
++ Result:
+|--------+---------------------------|
+| Length | Size in Bytes (my result) |
+|--------+---------------------------|
+|     27 |                       272 |
+|     26 |                       272 |
+|     25 |                       272 |
+|     24 |                       272 |
+|     23 |                       272 |
+|     22 |                       272 |
+|     21 |                       272 |
+|     20 |                       272 |
+|     19 |                       272 |
+|     18 |                       272 |
+|     17 |                       272 |
+|     16 |                       272 |
+|     15 |                       272 |
+|     14 |                       272 |
+|     13 |                       272 |
+|     12 |                       208 |
+|     11 |                       208 |
+|     10 |                       208 |
+|      9 |                       208 |
+|      8 |                       152 |
+|      7 |                       152 |
+|      6 |                       152 |
+|      5 |                       120 |
+|      4 |                       120 |
+|      3 |                       104 |
+|      2 |                        96 |
+|      1 |                        88 |
+|--------+---------------------------|
+
+*** DONE R-5.4
++ Our ~DynamicArray~ class, as given in Code Fragment 5.3, does not support use of negative indices with ~__getitem__~. Update that method to better match the semantics of a Python list.
+  
++ Implemented in ~pythondsa.src.arrays.DynamicArray~. Test added for verification of the new update.
+
+*** DONE R-5.5
++ Redo the justification of Proposition 5.1 assuming that the cost of growing the array from size k to size 2k is 3k cyber-dollars. How much should each append operation be charged to make the amortization work?
++ Answer:
+  - We assume one cyber-dollar is enough to pay for the execution of each append operation in S, just like in the justification of Proposition 5.1.
+  - We assume growing the array from size k to size 2k requires 3k cyber-dollars (3 times the amount of the justification of Proposition 5.1).
+  - We overcharge each append operation that does not cause an overflow by six cyber-dollars to a total charge for an append operation of seven cyber-dollars.
+  - Doubling the size of the array will require therefore 3 x 2i cyber-dollars (compared to 2i).
+  - Since this amount of cyber-dollars can be found stored in cells between previous resize and current resize, we have a valid amortization scheme.
+
+*** DONE R-5.6
++ Our implementation of ~insert~ for the ~DynamicArray~ class, as given in Code Fragment 5.5, has the following inefficiency. In the case when a resize occurs, the resize operation takes time to copy all the elements from an old array to a new array, and then the subsequent loop in the body of ~insert~ shifts many of those elements. Give an improved implementation of the ~insert~ method, so that, in the case of a resize, the elements are shifted into their final position during that operation, thereby avoiding the subsequent shifting.
++ Solution in ~pythondsa.src.arrays.DynamicArray~ plus tests to verify the new functionality.
+
+*** DONE R-5.7
++ Let ~A~ be an array of size n>=2 containing integers from 1 to n-1, inclusive, with exactly one repeated. Describe a fast algorithm for finding the integer in A that is repeated.
+
++ Solution: 
+  - sorting takes O(nlogn) time.
+  - traversing takes O(n) time.
+
+#+BEGIN_SRC python
+def find_repeated_integer(A):
+    A.sort()
+    last = None
+    for element in A:
+        if element == last:
+            return last
+        last = element
+#+END_SRC
+
+*** DONE R-5.8
++ Experimentally evaluate the efficiency of the ~pop~ method of Python's ~list~ class when using varying indices as a parameter, as we did for ~insert~ on page 205. Report your results akin to Table 5.5.
+
++ Code: 
+#+BEGIN_SRC python
+from functools import wraps
+from time import time
+
+def timing(f):
+    """A timing decorator for estimating a function's run time.
+    See: https://stackoverflow.com/a/27737385
+    """
+    @wraps(f)
+    def wrap(*args, **kw):
+        ts = time()
+        result = f(*args, **kw)
+        te = time()
+        print('func:%r args:[%r, %r] took: %2.4f sec' % \
+          (f.__name__, args, kw, te-ts))
+        return result
+    return wrap
+
+@timing
+def pop_from_front(n):
+    data = [None] * n
+    for _ in range(n):
+        data.pop(0)
+
+@timing
+def pop_from_middle(n):
+    data = [None] * n
+    for _ in range(n):
+        data.pop(len(data) // 2)
+
+@timing
+def pop_from_tail(n):
+    data = [None] * n
+    for _ in range(n):
+        data.pop()
+#+END_SRC
+
++ Result:
+|----------+------------+------------+------------+------------+--------------|
+|          | 100        | 1,000      | 10,000     | 100,000    | 1,000,000    |
+|----------+------------+------------+------------+------------+--------------|
+| ~k = 0~    | 0.0001 sec | 0.0006 sec | 0.0192 sec | 1.4352 sec | 217.9266 sec |
+| ~k = n//2~ | 0.0001 sec | 0.0007 sec | 0.0128 sec | 0.6736 sec | 74.3115 sec  |
+| ~k = n~    | 0.0000 sec | 0.0002 sec | 0.0019 sec | 0.0113 sec | 0.0543 sec   |
+|----------+------------+------------+------------+------------+--------------|
+  
+*** DONE R-5.9
++ Explain the changes that would have to be made to the program of Code Fragment 5.11 so that it could pefrorm the Caesar cipher for messages that are written in an alphabet-based language other than English, such as Greek, Russian, or Hebrew.
+
++ Answer:
+  - the number of letters in the specific alphabet has to be taken in consideration (e.g. the line ~encoder = [None] * 26~, the number 26 could be replaced by a variable storing the number of letters.
+  - the starting letter of the specific alphabet has to replace the letter 'A' in the lines where we offset the characters using ~ord('A')~ to mark the beginning of an alphabet sequence.
+
+*** DONE R-5.10
++ The constructor for the ~CaesarCipher~ class in Code Fragment 5.11 can be implemented with a two-line body by building the forward and backward strings using a combination of the ~join~ method and an appropriate comprehension syntax. Give such an implementation.
+  
++ Answer:
+#+BEGIN_SRC python
+# Original code:
+def __init__(self, shift):
+    """Construct Caesar cipher using given integer shift for rotation."""
+    encoder = [None] * 26
+    decoder = [None] * 26
+    for k in range(26):
+        encoder[k] = chr((k + shift) % 26 + ord('A'))
+        decoder[k] = chr((k + shift) % 26 + ord('A'))
+    self._forward = ''.join(encoder)
+    self._backward = ''.join(decoder)
+
+# Improved code:
+def __init__(self, shift):
+    """Construct Caesar cipher using given integer shift for rotation."""
+    self._forward = ''.join([chr((k + shift) % 26 + ord('A')) for k in range(26)])
+    self._backward = ''.join([chr((k + shift) % 26 + ord('A')) for k in range(26)])
+#+END_SRC
+
+*** DONE R-5.11
++ Use standard control structures to compute the sum of all numbers in an ~n x n~ data set, represented as a list of lists.
+
++ Solution:
+#+BEGIN_SRC python
+matrix = [
+    [11, 22, 33],  #         66
+    [28, 5, 4],    #         37
+    [18, 12, 31],  #         61
+]                  # total: 164
+
+matrix_sum = 0
+for row in matrix:
+    for cell in row:
+        matrix_sum += cell
+
+print(matrix_sum)
+#+END_SRC
+
+*** DONE R-5.12
++ Describe how the built-in ~sum~ function can be combined with Python's comprehension syntax to compute the sum of all numbers in an ~n x n~ data set, represented as a list of lists.
+
++ Solution:
+#+BEGIN_SRC python
+matrix = [
+    [11, 22, 33],  #         66
+    [28, 5, 4],    #         37
+    [18, 12, 31],  #         61
+]                  # total: 164
+
+matrix_sum = sum([sum(l) for l in matrix])
+print(matrix_sum)
+#+END_SRC
+
+** TODO Creativity [0/19]
+** TODO Projects [0/6]

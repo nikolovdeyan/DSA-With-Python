@@ -1,0 +1,5 @@
+* Data Structures and Algorithms with Python
+
+
+** Exercises
+[[./pythondsa/exercises/5.Array-Based_Sequences.org][5.Array-Based Sequences]]
