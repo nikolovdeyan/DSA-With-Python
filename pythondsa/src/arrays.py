@@ -1,4 +1,5 @@
-import ctypes  # provides low-level arrays
+import ctypes
+from pythondsa.src.exceptions import Empty
 
 
 class DynamicArray:
@@ -44,15 +45,29 @@ class DynamicArray:
 
     def remove(self, value):
         """Remove first occurrence of value (or raise ValueError)."""
-        # note: we do not consider shrinking the dynamic array in this version
         for k in range(self._n):
             if self._A[k] == value:
                 for j in range(k, self._n - 1):
                     self._A[j] = self._A[j + 1]
                 self._A[self._n - 1] = None        # help garbage collection
                 self._n -= 1
+                if self._capacity // 4 > self._n:   # shrink capacity if needed
+                    self._resize(self._capacity // 2)
                 return
         raise ValueError('value not found')    # only reached if no match
+
+    def pop(self):
+        """Remove and return the last element in the array.
+
+        Raise Empty exception if the array is empty."""
+        if self._n == 0:
+            raise Empty('The array is empty')
+        answer = self._A[self._n - 1]
+        self._A[self._n - 1] = None  # help garbage collection
+        self._n -= 1
+        if self._capacity // 4 > self._n:  # shrink capacity if needed
+            self._resize(self._capacity // 2)
+        return answer
 
     def _resize(self, c):
         """Resize internal array to capacity c."""

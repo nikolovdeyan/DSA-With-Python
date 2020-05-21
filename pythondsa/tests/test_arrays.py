@@ -1,5 +1,6 @@
 import unittest
 from pythondsa.src.arrays import DynamicArray
+from pythondsa.src.exceptions import Empty
 
 
 class TestDynamicArrayMethods(unittest.TestCase):
@@ -111,7 +112,6 @@ class TestDynamicArrayMethods(unittest.TestCase):
 
         self.assertEqual(da._A[0:5], expected_elements)
 
-    #  def test_insert_adds_at_index_shifts_items_...with_negative_index(self):
     def test_remove_raises_ValueError_with_value_missing_in_array(self):
         da = DynamicArray()
         da._n = 2
@@ -133,3 +133,57 @@ class TestDynamicArrayMethods(unittest.TestCase):
 
         self.assertEqual(da._A[0:4], expected_elements)
         self.assertEqual(da._n, 4)
+
+    def test_remove_halves_array_capacity_if_less_than_quarter_of_capacity_used(self):
+        da = DynamicArray()
+        da._capacity = 64
+        da._n = 17
+        da._A = da._make_array(da._capacity)
+        da._A[0:17] = [l for l in 'abcdefghijklmnopq']
+
+        #  first remove() should not shrink the array, since with 16 elements
+        #  we have not passed the N/4 threshold.
+        da.remove('a')
+
+        self.assertEqual(da._capacity, 64)
+
+        #  second remove() should trigger halving the array capacity:
+        da.remove('q')
+
+        self.assertEqual(da._capacity, 32)
+
+    def test_pop_raises_Empty_exception_if_array_is_empty(self):
+        da = DynamicArray()
+
+        self.assertRaises(Empty, da.pop)
+
+    def test_pop_removes_and_returns_last_element_of_array(self):
+        da = DynamicArray()
+        da._n = 3
+        da._capacity = 3
+        da._A = da._make_array(da._capacity)
+        da._A[0:3] = ['foo', 'bar', 'baz']
+
+        result = da.pop()
+
+        self.assertEqual(result, 'baz')
+        self.assertEqual(da._A[0:2], ['foo', 'bar'])
+        self.assertEqual(da._n, 2)
+
+    def test_pop_halves_array_capacity_if_less_than_quarter_of_capacity_used(self):
+        da = DynamicArray()
+        da._capacity = 64
+        da._n = 17
+        da._A = da._make_array(da._capacity)
+        da._A[0:17] = [None] * 17
+
+        #  first pop() should not shrink the array, since with 16 elements
+        #  we have not passed the N/4 threshold.
+        da.pop()
+
+        self.assertEqual(da._capacity, 64)
+
+        #  second pop() should trigger halving the array capacity:
+        da.pop()
+
+        self.assertEqual(da._capacity, 32)
