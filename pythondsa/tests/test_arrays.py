@@ -1,6 +1,6 @@
 import unittest
-from pythondsa.src.arrays import DynamicArray
 from pythondsa.src.exceptions import Empty
+from pythondsa.src.arrays import DynamicArray
 
 
 class TestDynamicArrayMethods(unittest.TestCase):
@@ -21,9 +21,20 @@ class TestDynamicArrayMethods(unittest.TestCase):
         self.assertEqual(result, expected_result)
 
     def test_getitem_raises_IndexError_with_invalid_index(self):
+        # Invalid index in an empty array:
         da = DynamicArray()
-
         self.assertRaises(IndexError, da.__getitem__, 0)
+
+        # Invalid positive index in a non-empty array:
+        da._capacity = 4
+        da._n = 3
+        da._A = da._make_array(da._capacity)
+        da._A[0:3] = [None] * 3
+
+        self.assertRaises(IndexError, da.__getitem__, 3)
+
+        # Invalid negative index in a non-empty array:
+        self.assertRaises(IndexError, da.__getitem__, -4)
 
     def test_getitem_returns_correct_element_at_positive_index(self):
         expected_result = 'bar'
