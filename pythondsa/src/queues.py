@@ -290,19 +290,29 @@ class ArrayDeque:
 
         Raise a ValueError if value not found.
         """
+        found = False
         for i in range(self._size):
             current = (self._front + i) % len(self._data)
             if self._data[current] == value:
-                # value found, shift elements from closer end of deque.
-                if i < self._size // 2:
-                    # value in first half or array, shift items from left
-                    for j in range(current):
-                        self._data[current] = self._data[current - 1]
-                    return
-                else:
-                    # value in second half of array, shift items from right
-                    return
-        raise ValueError('value not found in deque.')
+                found = True
+                break
+        if not found:
+            raise ValueError('value not found in deque.')
+        if i > self._size // 2:
+            for i in range(i, self._size - 1, 1):
+                current = (self._front + i) % len(self._data)
+                next = (current + 1) % len(self._data)
+                self._data[current] = self._data[next]
+                last = (self._front + self._size - 1) % len(self._data)
+                self._data[last] = None
+        else:
+            for i in range(i, 0, -1):
+                current = (self._front + i) % len(self._data)
+                prev = (current - 1) % len(self._data)
+                self._data[current] = self._data[prev]
+                self._data[self._front] = None
+                self._front += 1
+                self._size -= 1
 
     def rotate(self, n=1):
         """Rotate the deque n steps to the right. If n is negative, rotate to the left."""

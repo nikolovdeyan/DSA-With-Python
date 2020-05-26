@@ -471,13 +471,13 @@ class TestArrayDequeMethods(unittest.TestCase):
         d.remove('bar')
 
         self.assertEqual(d._size, 3)
-        self.assertIn(d._data, 'bar')
+        self.assertIn('bar', d._data)
         self.assertEqual(d._data[3:6], ['foo', 'baz', 'bar'])
 
     def test_remove_shifts_elements_from_shorter_end_of_deque(self):
         d = ArrayDeque()
         elements = ['1st', '2nd', '3rd', '4th', '5th', '6th', '7th']
-        d._data[0:8] = elements
+        d._data[0:7] = elements
         d._front = 0
         d._size = 7
 
@@ -486,16 +486,16 @@ class TestArrayDequeMethods(unittest.TestCase):
         # for i in range self._size -> i in range(7):
         # current = 1
         # 1 < self._size // 2 -> 1 < 3
-        # 
+        #
 
         d.remove('2nd')
 
-        self.assertEqual(d._data[1:8], ['1st', '3rd', '4th', '5th', '6th', '7th'])
+        self.assertEqual(d._data[1:7], ['1st', '3rd', '4th', '5th', '6th', '7th'])
         self.assertEqual(d._front, 1)  # front moved as elements left of center shifted
 
         d.remove('6th')
 
-        self.assertEqual(d._data[1:7], ['1st', '3rd', '4th', '5th', '7th'])
+        self.assertEqual(d._data[1:6], ['1st', '3rd', '4th', '5th', '7th'])
         self.assertEqual(d._front, 1)  # the front has not moved
 
     def test_remove_raises_ValueError_when_value_not_in_deque(self):
