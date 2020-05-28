@@ -1,5 +1,6 @@
 import unittest
-from pythondsa.src.maps import UnsortedTableMap
+from pythondsa.src.maps import UnsortedTableMap, ChainHashMap
+from pythondsa.src.maps import TreeMap
 
 
 class TestUnsortedTableMap(unittest.TestCase):
@@ -75,3 +76,35 @@ class TestUnsortedTableMap(unittest.TestCase):
         result = [k for k in utm]
 
         self.assertEqual(result, expected_result)
+
+
+class TestChainHashMap(unittest.TestCase):
+
+    def test_getitem_raises_KeyError_if_key_not_in_map(self):
+        chm = ChainHashMap()
+
+        self.assertRaises(KeyError, chm.__getitem__, 'spam')
+
+    def test_getitem_returns_item_value_for_matching_key_in_map(self):
+        chm = ChainHashMap()
+        expected_key = 'spam'
+        expected_value = 'eggs'
+        bucket = UnsortedTableMap()
+        expected_item = bucket._Item(expected_key, expected_value)
+        bucket._table = [expected_item]
+        chm._table[2] = bucket
+        # override hash function to return index
+        chm._hash_function = lambda x: 2
+        chm._n = 1
+
+        result = chm[expected_key]
+
+        self.assertEqual(result, expected_value)
+
+
+class TestTreeMap(unittest.TestCase):
+
+    def test_getitem_raises_KeyError_if_key_not_in_map(self):
+        tm = TreeMap()
+
+        self.assertRaises(KeyError, tm.__getitem__, 'spam')
